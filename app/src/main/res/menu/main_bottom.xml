@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.gardo.myapplication.MainActivity">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:orderInCategory="100"
+        android:title="Search"
+        app:showAsAction="always"
+        app:actionViewClass="android.widget.SearchView"/>
+    <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:orderInCategory="101"
+        android:title="Account"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_chat"
+        android:icon="@drawable/ic_chat_black_24dp"
+        android:orderInCategory="102"
+        android:title="Chat"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_assessment"
+        android:title="Staff Assessment"
+        android:orderInCategory="103"
+        app:showAsAction="never" >
+
+    </item>
+    <item
+        android:id="@+id/action_feedback"
+        android:title="Feedback"
+        android:orderInCategory="104"
+        app:showAsAction="never" >
+
+    </item>
+    <item
+        android:id="@+id/action_about"
+        android:title="About"
+        android:orderInCategory="105"
+        app:showAsAction="never" >
+
+    </item>
+</menu>

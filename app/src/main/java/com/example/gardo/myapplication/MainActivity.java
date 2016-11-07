@@ -35,14 +35,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        Toolbar toolbar_bottom = (Toolbar) findViewById(R.id.toolbar_bottom);
+        toolbar_bottom.inflateMenu(R.menu.main_bottom);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -58,6 +52,7 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new MenuFragment(), "MENU");
         viewPagerAdapter.addFragment(new HotMenuFragment(), "HOT MENU");
+        viewPagerAdapter.addFragment(new TopSellerFragment(), "TOP SELLER");
         viewPagerAdapter.addFragment(new FavoriteFragment(), "FAVORITE MENU");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
