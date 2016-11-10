@@ -22,6 +22,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,6 +34,9 @@ public class MainActivity extends AppCompatActivity
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    ImageView account_circle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +47,9 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar_bottom = (Toolbar) findViewById(R.id.toolbar_bottom);
         toolbar_bottom.inflateMenu(R.menu.main_bottom);
-
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        String email = user.getEmail();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -48,6 +58,17 @@ public class MainActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            View header = navigationView.getHeaderView(0);
+        account_circle = (ImageView) header.findViewById(R.id.account_circle);
+        TextView name_info = (TextView) header.findViewById(R.id.name_info);
+        TextView email_info = (TextView) header.findViewById(R.id.email_info);
+        if(email == null){
+            account_circle.setImageResource(R.drawable.avtar_anonymous);
+            account_circle.setMaxHeight(10);
+            account_circle.setMaxWidth(10);
+            name_info.setText("anonymous");
+            email_info.setText("");
+        }
         navigationView.setNavigationItemSelectedListener(this);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);

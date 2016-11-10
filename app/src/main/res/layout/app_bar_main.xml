@@ -21,7 +21,8 @@
             android:layout_width="match_parent"
             android:id="@+id/tabLayout"
             app:tabMode="fixed"
-            app:tabGravity="fill">
+            app:tabGravity="fill"
+            android:background="@android:color/black">
 
         </android.support.design.widget.TabLayout>
 
