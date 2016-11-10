@@ -23,37 +23,63 @@ public class AdapterList extends ArrayAdapter<String> {
     private final Activity context;
     private final String[] food;
     private final Integer[] imageId;
-    private Button increase, decrease;
-    private ToggleButton like, favorite;
-    private TextView number;
+    private final Double[] price;
     private ArrayList<Integer> quantity = new ArrayList<>();
     public AdapterList(Activity context,
-                      String[] food, Integer[] imageId) {
+                      String[] food, Integer[] imageId, Double[] price) {
         super(context, R.layout.list_single_item, food);
         this.context = context;
         this.food = food;
         this.imageId = imageId;
+        this.price = price;
         for (int i = 0; i < food.length; i++) {
             quantity.add(0);
         }
 
     }
+    public class Holder {
+        private Button increase, decrease;
+        private ToggleButton like, favorite;
+        private TextView number;
+        RelativeLayout item;
+        ImageView img;
+        TextView txtTitle, price_text;
+    }
     @Override
-    public View getView(final int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, final ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
         final View rowView= inflater.inflate(R.layout.list_single_item, null, true);
-        TextView txtTitle = (TextView) rowView.findViewById(R.id.txt);
-        number = (TextView) rowView.findViewById(R.id.quantity);
-        like = (ToggleButton) rowView.findViewById(R.id.like);
-        RelativeLayout item = (RelativeLayout) rowView.findViewById(R.id.single_item);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
-        txtTitle.setText(food[position]);
-        imageView.setImageResource(imageId[position]);
-        number.setText(Integer.toString(quantity.get(position)));
-        item.setOnClickListener(new View.OnClickListener() {
+        final Holder holder = new Holder();
+        holder.txtTitle = (TextView) rowView.findViewById(R.id.txt);
+        holder.number = (TextView) rowView.findViewById(R.id.quantity);
+        holder.like = (ToggleButton) rowView.findViewById(R.id.like);
+        holder.item = (RelativeLayout) rowView.findViewById(R.id.single_item);
+        holder.img = (ImageView) rowView.findViewById(R.id.img);
+        holder.price_text = (TextView) rowView.findViewById(R.id.price);
+        holder.txtTitle.setText(food[position]);
+        holder.img.setImageResource(imageId[position]);
+        holder.price_text.setText("$" + price[position]);
+        holder.number.setText(Integer.toString(quantity.get(position)));
+        holder.item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(rowView.getContext(), "You Clicked at " + food[position], Toast.LENGTH_SHORT).show();
+            }
+        });
+        holder.increase = (Button) rowView.findViewById(R.id.increase);
+        holder.decrease = (Button) rowView.findViewById(R.id.decrease);
+        holder.increase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                quantity.set(position, quantity.get(position)+1);
+                holder.number.setText(Integer.toString(quantity.get(position)));
+            }
+        });
+        holder.decrease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                quantity.set(position, quantity.get(position)-1);
+                holder.number.setText(Integer.toString(quantity.get(position)));
             }
         });
         return rowView;

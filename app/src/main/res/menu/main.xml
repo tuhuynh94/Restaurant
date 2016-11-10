@@ -11,17 +11,18 @@
         app:showAsAction="always"
         app:actionViewClass="android.widget.SearchView"/>
     <item
-        android:id="@+id/action_account"
-        android:icon="@drawable/ic_account_circle_black_24dp"
-        android:orderInCategory="101"
-        android:title="Account"
+        android:id="@+id/action_order"
+        android:icon="@drawable/choice"
+        android:orderInCategory="103"
+        android:title="Order"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_chat"
-        android:icon="@drawable/ic_chat_black_24dp"
+        android:id="@+id/action_waiter"
+        android:icon="@drawable/waiter"
         android:orderInCategory="102"
-        android:title="Chat"
+        android:title="Waiter"
         app:showAsAction="always" />
+
     <item
         android:id="@+id/action_assessment"
         android:title="Staff Assessment"
