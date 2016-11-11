@@ -61,4 +61,16 @@
         android:layout_marginEnd="11dp"
         android:text="Sign in" />
 
+    <TextView
+        android:text="Create Account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="22dp"
+        android:id="@+id/register_account"
+        android:textColor="@android:color/holo_blue_dark"
+        android:clickable="true"
+        android:onClick="register"/>
+
 </RelativeLayout>

@@ -40,5 +40,16 @@
             </menu>
         </item>
     </group>
-
+    <group>
+        <item
+            android:id="@+id/account_status"
+            android:title="Account">
+        <menu>
+            <item
+                android:title="SIGN OUT"
+                android:id="@+id/sign_out">
+            </item>
+        </menu>
+        </item>
+    </group>
 </menu>

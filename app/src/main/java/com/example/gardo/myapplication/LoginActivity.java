@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
                     // User is signed in
                     Log.d("Auth:", user.getUid());
                     String userID = user.getUid().toString();
-                    Toast.makeText(getApplicationContext(), "guest-" + userID.substring(userID.length() - 4, userID.length()), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "guest-" + userID.substring(userID.length() - 4, userID.length()), Toast.LENGTH_SHORT).show();
                 }
             }
         };

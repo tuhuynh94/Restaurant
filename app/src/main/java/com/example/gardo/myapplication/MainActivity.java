@@ -2,6 +2,7 @@ package com.example.gardo.myapplication;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -69,6 +70,9 @@ public class MainActivity extends AppCompatActivity
             name_info.setText("anonymous");
             email_info.setText("");
         }
+        else{
+            email_info.setText(user.getEmail());
+        }
         navigationView.setNavigationItemSelectedListener(this);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -135,6 +139,11 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_dolci) {
 
+        }
+        else if (id == R.id.sign_out){
+            FirebaseAuth.getInstance().signOut();
+            Intent i = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(i);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
