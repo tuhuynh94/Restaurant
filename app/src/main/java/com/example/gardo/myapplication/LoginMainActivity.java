@@ -1,6 +1,7 @@
 package com.example.gardo.myapplication;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class LoginMainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -52,25 +54,32 @@ public class LoginMainActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email_input);
         password = (EditText) findViewById(R.id.password_input);
         sign_in = (Button) findViewById(R.id.sign_in);
-        sign_in.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                        .addOnCompleteListener(LoginMainActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
-                startActivity(i);
-            }
-        });
+            sign_in.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(email.getText().toString().equals("admin@123.com") && password.getText().toString().equals("admin123")){
+                        Toast.makeText(LoginMainActivity.this, "Signed with Adminstrator", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+                        i.putExtra("admin", "admin");
+                        startActivity(i);
+                    }
+                    else {
+                        mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                                .addOnCompleteListener(LoginMainActivity.this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (!task.isSuccessful()) {
+                                            Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
+                                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+                                            startActivity(i);
+                                        }
+                                    }
+                                });
+                    }
+                }
+            });
     }
 
     @Override

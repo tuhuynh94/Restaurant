@@ -15,11 +15,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,10 @@ public class LoginActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         mAuth = FirebaseAuth.getInstance();
         Button pre_sign = (Button) findViewById(R.id.type_sign_in);
+        mAuth = FirebaseAuth.getInstance();
+//        mDatabase = FirebaseDatabase.getInstance().getReference();
+//        final FirebaseUser userFire = mAuth.getCurrentUser();
+//        final DatabaseReference like = mDatabase.child("user").child(userFire.getUid()).child("like");
         pre_sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,7 +76,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()) {
-                    Log.w("Auth:", task.getException());
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if(user != null) {
+                        String userID = user.getUid().toString();
+                        Toast.makeText(getApplicationContext(), "guest-" + userID.substring(userID.length() - 4, userID.length()), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

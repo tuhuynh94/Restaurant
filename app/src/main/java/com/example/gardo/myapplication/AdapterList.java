@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.v4.util.LogWriter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,32 +14,39 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.ArrayList;
+import com.example.gardo.myapplication.Model.FoodModel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.api.model.StringList;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class AdapterList extends ArrayAdapter<String> {
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+
+public class AdapterList extends ArrayAdapter<FoodModel> {
     private final Activity context;
-    private final String[] food;
-    private final Integer[] imageId;
-    private final Double[] price;
-    private ArrayList<Integer> quantity = new ArrayList<>();
-    public AdapterList(Activity context,
-                      String[] food, Integer[] imageId, Double[] price) {
+    private ArrayList<FoodModel> food;
+    private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
+
+    public AdapterList(Activity context, ArrayList<FoodModel> food) {
         super(context, R.layout.list_single_item, food);
         this.context = context;
         this.food = food;
-        this.imageId = imageId;
-        this.price = price;
-        for (int i = 0; i < food.length; i++) {
-            quantity.add(0);
-        }
-
     }
+
     public class Holder {
         private Button increase, decrease;
         private ToggleButton like, favorite;
@@ -45,10 +55,11 @@ public class AdapterList extends ArrayAdapter<String> {
         ImageView img;
         TextView txtTitle, price_text;
     }
+    DatabaseReference user;
     @Override
     public View getView(final int position, View view, final ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        final View rowView= inflater.inflate(R.layout.list_single_item, null, true);
+        final View rowView = inflater.inflate(R.layout.list_single_item, null, true);
         final Holder holder = new Holder();
         holder.txtTitle = (TextView) rowView.findViewById(R.id.txt);
         holder.number = (TextView) rowView.findViewById(R.id.quantity);
@@ -56,14 +67,14 @@ public class AdapterList extends ArrayAdapter<String> {
         holder.item = (RelativeLayout) rowView.findViewById(R.id.single_item);
         holder.img = (ImageView) rowView.findViewById(R.id.img);
         holder.price_text = (TextView) rowView.findViewById(R.id.price);
-        holder.txtTitle.setText(food[position]);
-        holder.img.setImageResource(imageId[position]);
-        holder.price_text.setText("$" + price[position]);
-        holder.number.setText(Integer.toString(quantity.get(position)));
+        holder.txtTitle.setText(food.get(position).getName());
+        holder.img.setImageResource(food.get(position).getImg());
+        holder.price_text.setText("$" + food.get(position).getPrice());
+        holder.number.setText(Integer.toString(food.get(position).getQuantity()));
         holder.item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(rowView.getContext(), "You Clicked at " + food[position], Toast.LENGTH_SHORT).show();
+                Toast.makeText(rowView.getContext(), "You Clicked at " + food.get(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
         holder.increase = (Button) rowView.findViewById(R.id.increase);
@@ -71,17 +82,125 @@ public class AdapterList extends ArrayAdapter<String> {
         holder.increase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                quantity.set(position, quantity.get(position)+1);
-                holder.number.setText(Integer.toString(quantity.get(position)));
+                food.get(position).setQuantity(food.get(position).getQuantity() + 1);
+                holder.number.setText(Integer.toString(food.get(position).getQuantity()));
             }
         });
         holder.decrease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                quantity.set(position, quantity.get(position)-1);
-                holder.number.setText(Integer.toString(quantity.get(position)));
+                food.get(position).setQuantity(food.get(position).getQuantity() - 1);
+                if (food.get(position).getQuantity() < 0) {
+                    food.get(position).setQuantity(0);
+                }
+                holder.number.setText(Integer.toString(food.get(position).getQuantity()));
+            }
+        });
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        final FirebaseUser userFire = mAuth.getCurrentUser();
+        user = mDatabase.child("user").child(userFire.getUid()).child("favorite");
+        final DatabaseReference foodLike = mDatabase.child("food").child(food.get(position).getName()).child("like");
+        holder.favorite = (ToggleButton) rowView.findViewById(R.id.favorite);
+        holder.favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FoodModel item = new FoodModel(food.get(position).getName(), food.get(position).getImg(), food.get(position).getPrice(), 0);
+                if(holder.favorite.isChecked()){
+                    user.child(item.getName()).setValue(item);
+                }
+                else{
+                    user.child(item.getName()).removeValue();
+                }
+            }
+        });
+        holder.like = (ToggleButton) rowView.findViewById(R.id.like);
+        final DatabaseReference like = mDatabase.child("user").child(userFire.getUid()).child("like");
+        like.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
+                if(map != null && map.containsKey(food.get(position).getName())){
+                    holder.like.setChecked(true);
+                }
+                else{
+                    holder.like.setChecked(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        holder.like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                foodLike.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        FoodModel item = new FoodModel(food.get(position).getName(), food.get(position).getImg(), food.get(position).getPrice(), 0);
+                        if(holder.like.isChecked()){
+                            foodLike.setValue(((Long)dataSnapshot.getValue()) + 1);
+                            like.child(item.getName()).setValue(true);
+                        }
+                        else{
+                            if((Long)dataSnapshot.getValue() > 0) {
+                                foodLike.setValue(((Long) dataSnapshot.getValue()) - 1);
+                                like.child(item.getName()).removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
         return rowView;
     }
+
+//    @NonNull
+//    @Override
+//    public Filter getFilter() {
+//        return new Filter() {
+//            @SuppressWarnings("unchecked")
+//            @Override
+//            protected void publishResults(CharSequence constraint, FilterResults results) {
+//                Log.d("Filter", "**** PUBLISHING RESULTS for: " + constraint);
+//                food = (ArrayList<FoodModel>) results.values;
+//                notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            protected FilterResults performFiltering(CharSequence constraint) {
+//                Log.d("Filter", "**** PERFORM FILTERING for: " + constraint);
+//                ArrayList<FoodModel> filteredResults = getFilteredResults(constraint);
+//
+//                FilterResults results = new FilterResults();
+//                results.values = filteredResults;
+//                results.count = filteredResults.size();
+//
+//                return results;
+//            }
+//        };
+//    }
+//
+//    public ArrayList<FoodModel> getFilteredResults(CharSequence text) {
+//        ArrayList<FoodModel> result = new ArrayList<>();
+//        if (text == null) {
+//            result = food;
+//        } else {
+//            if (food != null && food.size() > 0) {
+//                for (FoodModel e : food) {
+//                    if (e.getName().toLowerCase().contains(text.toString().toLowerCase())) {
+//                        result.add(e);
+//                    }
+//                }
+//            }
+//        }
+//        return result;
+//    }
 }

@@ -1,8 +1,10 @@
 package com.example.gardo.myapplication;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,7 +14,9 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
+import android.view.KeyEvent;
 import android.view.MenuInflater;
+import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,8 +27,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
+
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -50,7 +61,10 @@ public class MainActivity extends AppCompatActivity
         toolbar_bottom.inflateMenu(R.menu.main_bottom);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        String email = user.getEmail();
+        String email = null;
+        if(user != null) {
+            email = user.getEmail();
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -59,7 +73,10 @@ public class MainActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            View header = navigationView.getHeaderView(0);
+        View header = navigationView.getHeaderView(0);
+        if(getIntent().getExtras() != null && getIntent().getExtras().get("admin").equals("admin")){
+            navigationView.getMenu().findItem(R.id.update_menu).setVisible(true);
+        }
         account_circle = (ImageView) header.findViewById(R.id.account_circle);
         TextView name_info = (TextView) header.findViewById(R.id.name_info);
         TextView email_info = (TextView) header.findViewById(R.id.email_info);
@@ -71,6 +88,16 @@ public class MainActivity extends AppCompatActivity
             email_info.setText("");
         }
         else{
+//            FirebaseStorage storage = FirebaseStorage.getInstance();
+//            StorageReference storageRef = storage.getReferenceFromUrl("gs://restaurant-d8ad0.appspot.com/");
+//            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//                    .setDisplayName("Gardon Zero")
+//                    .setPhotoUri(Uri.parse(storageRef.child("panda.png").getDownloadUrl().getResult()))
+//                    .build();
+//            user.updateProfile(profileUpdates);
+//            name_info.setText(user.getDisplayName().toString());
+//            String uri = user.getPhotoUrl().toString();
+//            Glide.with(this).using(new FirebaseImageLoader()).load(storageRef.child("panda.png")).into(account_circle);
             email_info.setText(user.getEmail());
         }
         navigationView.setNavigationItemSelectedListener(this);
@@ -141,9 +168,12 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.sign_out){
-            FirebaseAuth.getInstance().signOut();
+            mAuth.getInstance().signOut();
             Intent i = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(i);
+        }
+        else if (id == R.id.update_menu){
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

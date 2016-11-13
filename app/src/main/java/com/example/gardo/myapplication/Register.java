@@ -87,11 +87,11 @@ public class Register extends AppCompatActivity {
                                     }
                                     else{
                                         Toast.makeText(Register.this, "Successful registration", Toast.LENGTH_SHORT).show();
+                                        Intent i = new Intent(Register.this, LoginActivity.class);
+                                        startActivity(i);
                                     }
                                 }
                             });
-                    Intent i = new Intent(Register.this, LoginActivity.class);
-                    startActivity(i);
                 }
             }
         });

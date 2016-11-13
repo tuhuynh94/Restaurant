@@ -37,6 +37,9 @@
                     android:id="@+id/nav_dolci"
                     android:icon="@drawable/ic_menu_send"
                     android:title="DOLCI" />
+                <item android:id="@+id/update_menu"
+                    android:title="UPDATE MENU"
+                    android:visible="false"/>
             </menu>
         </item>
     </group>
