@@ -1,10 +1,11 @@
 package com.example.gardo.myapplication.Model;
 
-public class FoodModel {
+public class FoodModel implements Comparable<FoodModel>{
     private Integer quantity;
     private String name;
     private Integer img;
     private Double price;
+    private Long like;
 
     public FoodModel(String name, Integer img, Double price, Integer quantity) {
         this.name = name;
@@ -43,5 +44,18 @@ public class FoodModel {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Long getLike() {
+        return like;
+    }
+
+    public void setLike(Long like) {
+        this.like = like;
+    }
+
+    @Override
+    public int compareTo(FoodModel foodModel) {
+        return foodModel.getLike().compareTo(this.getLike());
     }
 }

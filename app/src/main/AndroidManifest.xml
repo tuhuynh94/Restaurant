@@ -31,7 +31,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginMainActivity" />
-        <activity android:name=".Register"></activity>
+        <activity android:name=".Register" />
+        <activity android:name=".OrderActivity"></activity>
     </application>
 
 </manifest>

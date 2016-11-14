@@ -33,6 +33,8 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
     private FirebaseUser user;
     ImageView account_circle;
 
@@ -144,6 +147,10 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_about) {
             return true;
         }
+        if(id == R.id.action_order){
+            Intent i = new Intent(this, OrderActivity.class);
+            startActivity(i);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -181,4 +188,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+        super.onDestroy();
+    }
 }

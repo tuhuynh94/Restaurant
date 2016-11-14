@@ -54,8 +54,10 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
         RelativeLayout item;
         ImageView img;
         TextView txtTitle, price_text;
+        Button add;
     }
     DatabaseReference user;
+    ArrayList<FoodModel> order_item;
     @Override
     public View getView(final int position, View view, final ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
@@ -114,6 +116,24 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
                 }
             }
         });
+        final DatabaseReference favorite = mDatabase.child("user").child(userFire.getUid()).child("favorite");
+        favorite.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
+                if(map != null && map.containsKey(food.get(position).getName())){
+                    holder.favorite.setChecked(true);
+                }
+                else{
+                    holder.favorite.setChecked(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         holder.like = (ToggleButton) rowView.findViewById(R.id.like);
         final DatabaseReference like = mDatabase.child("user").child(userFire.getUid()).child("like");
         like.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -157,6 +177,24 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
 
                     }
                 });
+            }
+        });
+        holder.add = (Button) rowView.findViewById(R.id.btn_add);
+        final DatabaseReference userOrder = mDatabase.child("user").child(userFire.getUid()).child("order");
+        holder.add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.add.getText().toString().equals("ADD")) {
+                    FoodModel item = new FoodModel(food.get(position).getName(), food.get(position).getImg(), food.get(position).getPrice(), food.get(position).getQuantity());
+                    if(food.get(position).getQuantity() > 0) {
+                        userOrder.child(food.get(position).getName()).setValue(item);
+                        holder.add.setText("ADDED");
+                    }
+                }
+                else{
+                    userOrder.child(food.get(position).getName()).removeValue();
+                    holder.add.setText("ADD");
+                }
             }
         });
         return rowView;
