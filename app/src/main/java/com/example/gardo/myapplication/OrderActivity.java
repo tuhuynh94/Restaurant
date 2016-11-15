@@ -4,10 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.gardo.myapplication.Model.FoodModel;
+import com.example.gardo.myapplication.Model.OrderGridModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,21 +29,29 @@ public class OrderActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     ArrayList<String> list;
-    ArrayAdapter<String> adapter;
-    String[] array;
+    ArrayAdapter<FoodModel> adapter;
+    ArrayList<FoodModel> array;
     ListView list_order;
+    double total_d;
+    double discount_d;
+    double grand_total_d;
+    TextView total, grand_total, discount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_layout);
         list_order = (ListView) findViewById(R.id.list_order);
-        TextView total = (TextView) findViewById(R.id.total);
-        TextView grand_total = (TextView) findViewById(R.id.grand_total);
-        TextView discount = (TextView) findViewById(R.id.discount);
-        double total_d = 0;
-        double discount_d = 0;
-        final HashSet<String> temp = new HashSet<>();
+        total = (TextView) findViewById(R.id.total);
+        grand_total = (TextView) findViewById(R.id.grand_total);
+        discount = (TextView) findViewById(R.id.discount);
+        GridView gridView = (GridView) findViewById(R.id.grid_description);
+        String array1[] = {"Name", "Quantity", "Price"};
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array1);
+        gridView.setAdapter(adapter1);
+        total_d = 0;
+        discount_d = 0;
+        final HashSet<FoodModel> temp = new HashSet<>();
         list = new ArrayList<String>();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -49,19 +60,23 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
-                while (iterator.hasNext()){
-                    Map<String, Object> map = (Map<String, Object>) ((DataSnapshot)iterator.next()).getValue();
+                while (iterator.hasNext()) {
+                    Map<String, Object> map = (Map<String, Object>) ((DataSnapshot) iterator.next()).getValue();
                     String name = (String) map.get("name");
-                    Integer img = Integer.valueOf(String.valueOf(map.get("img")));
+                    String img = String.valueOf(map.get("img"));
                     Double price = Double.valueOf(String.valueOf(map.get("price")));
                     Integer quantity = Integer.valueOf(String.valueOf(map.get("quantity")));
-                    temp.add(name + "\t" + quantity + "\t" + price);
+                    FoodModel item = new FoodModel(name, img, price, quantity);
+                    total_d += price * quantity;
+                    temp.add(item);
                 }
                 StringBuilder log = new StringBuilder();
-                array = new String[temp.size()];
-                temp.toArray(array);
-                Arrays.sort(array);
-                adapter = new ArrayAdapter<String>(OrderActivity.this, R.layout.item_order_layout, array);
+                array = new ArrayList<FoodModel>(temp);
+                adapter = new OrderGridModel(OrderActivity.this, array);
+                grand_total_d = discount_d + total_d;
+                total.setText(total_d + "");
+                discount.setText(discount_d + "");
+                grand_total.setText(grand_total_d + "");
                 list_order.setAdapter(adapter);
             }
 

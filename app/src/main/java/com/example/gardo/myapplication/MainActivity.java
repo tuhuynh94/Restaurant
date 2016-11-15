@@ -14,6 +14,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuInflater;
 import android.view.SubMenu;
@@ -103,6 +104,8 @@ public class MainActivity extends AppCompatActivity
 //            Glide.with(this).using(new FirebaseImageLoader()).load(storageRef.child("panda.png")).into(account_circle);
             email_info.setText(user.getEmail());
         }
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        Log.v("storage", storageRef.toString());
         navigationView.setNavigationItemSelectedListener(this);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -194,4 +197,5 @@ public class MainActivity extends AppCompatActivity
         mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
         super.onDestroy();
     }
+    
 }

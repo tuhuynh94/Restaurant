@@ -3,9 +3,12 @@ package com.example.gardo.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LogWriter;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.bumptech.glide.Glide;
 import com.example.gardo.myapplication.Model.FoodModel;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.api.model.StringList;
@@ -30,6 +36,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,6 +48,7 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
     private ArrayList<FoodModel> food;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+    private StorageReference storage = FirebaseStorage.getInstance().getReference();
 
     public AdapterList(Activity context, ArrayList<FoodModel> food) {
         super(context, R.layout.list_single_item, food);
@@ -70,7 +79,7 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
         holder.img = (ImageView) rowView.findViewById(R.id.img);
         holder.price_text = (TextView) rowView.findViewById(R.id.price);
         holder.txtTitle.setText(food.get(position).getName());
-        holder.img.setImageResource(food.get(position).getImg());
+        Glide.with(getContext()).using(new FirebaseImageLoader()).load(storage.child("menu/"+food.get(position).getImg())).into(holder.img);
         holder.price_text.setText("$" + food.get(position).getPrice());
         holder.number.setText(Integer.toString(food.get(position).getQuantity()));
         holder.item.setOnClickListener(new View.OnClickListener() {
@@ -188,13 +197,32 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
                     FoodModel item = new FoodModel(food.get(position).getName(), food.get(position).getImg(), food.get(position).getPrice(), food.get(position).getQuantity());
                     if(food.get(position).getQuantity() > 0) {
                         userOrder.child(food.get(position).getName()).setValue(item);
-                        holder.add.setText("ADDED");
+                        holder.add.setText("REMOVE");
                     }
                 }
                 else{
                     userOrder.child(food.get(position).getName()).removeValue();
                     holder.add.setText("ADD");
                 }
+            }
+        });
+        holder.number.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(holder.add.getText().toString().equals("REMOVE")) {
+                    userOrder.child(food.get(position).getName()).removeValue();
+                    holder.add.setText("ADD");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         return rowView;

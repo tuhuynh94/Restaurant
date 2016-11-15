@@ -2,7 +2,9 @@ package com.example.gardo.myapplication;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ public class FavoriteFragment extends Fragment {
     AdapterList adapter;
     ArrayList<FoodModel> foodList;
     ListView list_view;
+    SwipeRefreshLayout swipe;
 
     public FavoriteFragment() {
         // Required empty public constructor
@@ -43,19 +46,35 @@ public class FavoriteFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         View root = inflater.inflate(R.layout.fragment_favorite, container, false);
-        DatabaseReference user = mDatabase.child("user").child(mAuth.getCurrentUser().getUid()).child("favorite");
         foodList = new ArrayList<>();
         adapter = new AdapterList(this.getActivity(), foodList);
         list_view = (ListView) root.findViewById(R.id.list_favorite_menu);
         list_view.setAdapter(adapter);
-        user.addValueEventListener(new ValueEventListener() {
+        loadFavoriteFood();
+        return root;
+
+    }
+    private void refreshContent() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                foodList.clear();
+                loadFavoriteFood();
+                swipe.setRefreshing(false);
+            }
+        }, 4000);
+    }
+
+    private void loadFavoriteFood() {
+        DatabaseReference user = mDatabase.child("user").child(mAuth.getCurrentUser().getUid()).child("favorite");
+        user.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
                 while (iterator.hasNext()){
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot)iterator.next()).getValue();
                     String name = (String) map.get("name");
-                    Integer img = Integer.valueOf(String.valueOf(map.get("img")));
+                    String img = String.valueOf(map.get("img"));
                     Double price = Double.valueOf(String.valueOf(map.get("price")));
                     FoodModel item = new FoodModel(name, img, price, 0);
                     foodList.add(item);
@@ -68,8 +87,6 @@ public class FavoriteFragment extends Fragment {
 
             }
         });
-        return root;
-
     }
 
 }

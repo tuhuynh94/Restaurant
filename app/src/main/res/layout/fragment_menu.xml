@@ -1,8 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.gardo.myapplication.MenuFragment">
+    tools:context="com.example.gardo.myapplication.MenuFragment"
+    android:id="@+id/refresh_menu">
 
     <!-- TODO: Update blank fragment layout -->
     <ListView
@@ -11,4 +12,4 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"/>
 
-</FrameLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

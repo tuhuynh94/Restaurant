@@ -3,11 +3,11 @@ package com.example.gardo.myapplication.Model;
 public class FoodModel implements Comparable<FoodModel>{
     private Integer quantity;
     private String name;
-    private Integer img;
+    private String img;
     private Double price;
     private Long like;
 
-    public FoodModel(String name, Integer img, Double price, Integer quantity) {
+    public FoodModel(String name, String img, Double price, Integer quantity) {
         this.name = name;
         this.img = img;
         this.price = price;
@@ -30,11 +30,11 @@ public class FoodModel implements Comparable<FoodModel>{
         this.name = name;
     }
 
-    public Integer getImg() {
+    public String getImg() {
         return img;
     }
 
-    public void setImg(Integer img) {
+    public void setImg(String img) {
         this.img = img;
     }
 

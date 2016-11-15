@@ -1,8 +1,12 @@
 package com.example.gardo.myapplication;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +33,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HotMenuFragment extends Fragment {
+public class HotMenuFragment extends Fragment{
     DatabaseReference mDatabase;
     FirebaseDatabase database;
     FirebaseAuth mAuth;
@@ -38,6 +42,7 @@ public class HotMenuFragment extends Fragment {
     private AdapterList adapter;
     ListView list_view;
     private int sizeHotMenu = 2;
+    SwipeRefreshLayout swipe;
 
 
     public HotMenuFragment() {
@@ -52,12 +57,35 @@ public class HotMenuFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         View root = inflater.inflate(R.layout.fragment_hot_menu, container, false);
-        final DatabaseReference foodRef = mDatabase.child("food");
         foodList = new ArrayList<>();
         hotList = new ArrayList<>();
         adapter = new AdapterList(this.getActivity(), hotList);
         list_view = (ListView) root.findViewById(R.id.list_hot_menu);
+        swipe = (SwipeRefreshLayout) root.findViewById(R.id.refresh_hot_menu);
         list_view.setAdapter(adapter);
+        loadHotFood();
+        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshContent();
+            }
+        });
+        return root;
+    }
+
+    private void refreshContent() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hotList.clear();
+                loadHotFood();
+                swipe.setRefreshing(false);
+            }
+        }, 4000);
+    }
+
+    private void loadHotFood() {
+        final DatabaseReference foodRef = mDatabase.child("food");
         foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -65,7 +93,7 @@ public class HotMenuFragment extends Fragment {
                 while (iterator.hasNext()) {
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot) iterator.next()).getValue();
                     String name = (String) map.get("name");
-                    Integer img = Integer.valueOf(String.valueOf(map.get("img")));
+                    String img = String.valueOf(map.get("img"));
                     Double price = Double.valueOf(String.valueOf(map.get("price")));
                     Long like = Long.valueOf(String.valueOf(map.get("like")));
                     FoodModel item = new FoodModel(name, img, price, 0);
@@ -82,7 +110,10 @@ public class HotMenuFragment extends Fragment {
                 for (int i = 0; i < sizeHotMenu; i++) {
                     hotList.add(foodList.get(i));
                 }
-                Log.v("Hot", res2.toString());
+                for (FoodModel e : hotList) {
+                    res2.append(e.getName() + "\n");
+                }
+                Log.v("Hot1", res2.toString());
                 adapter.notifyDataSetChanged();
             }
 
@@ -91,6 +122,6 @@ public class HotMenuFragment extends Fragment {
 
             }
         });
-        return root;
     }
+
 }

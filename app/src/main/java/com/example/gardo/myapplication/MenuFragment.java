@@ -3,9 +3,11 @@ package com.example.gardo.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +22,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.gardo.myapplication.Model.FoodModel;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +32,8 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,7 +82,7 @@ public class MenuFragment extends Fragment{
                 while (iterator.hasNext()){
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot)iterator.next()).getValue();
                     String name = (String) map.get("name");
-                    Integer img = Integer.valueOf(String.valueOf(map.get("img")));
+                    String img = String.valueOf(map.get("img"));
                     Double price = Double.valueOf(String.valueOf(map.get("price")));
                     FoodModel item = new FoodModel(name, img, price, 0);
                     foodList.add(item);
@@ -90,7 +95,13 @@ public class MenuFragment extends Fragment{
 
             }
         });
+        dbchange();
         return root;
+    }
+
+    private void dbchange() {
+        StorageReference storage = FirebaseStorage.getInstance().getReference().child("menu").child("bianca.jpg");
+        Log.v("Url", storage.toString());
     }
 
     @Override
