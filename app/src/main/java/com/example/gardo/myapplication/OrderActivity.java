@@ -1,13 +1,17 @@
 package com.example.gardo.myapplication;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.gardo.myapplication.Model.DiaglogModel;
 import com.example.gardo.myapplication.Model.FoodModel;
 import com.example.gardo.myapplication.Model.OrderGridModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -83,6 +87,22 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+        Button confirm = (Button) findViewById(R.id.confirm_order);
+        Button back = (Button) findViewById(R.id.back_main);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(OrderActivity.this, MainActivity.class);
+                startActivity(i);
+            }
+        });
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DiaglogModel myDiaglog = new DiaglogModel();
+                myDiaglog.show(getFragmentManager(), "show_diaglod");
             }
         });
     }

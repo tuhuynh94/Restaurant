@@ -8,8 +8,8 @@
 
         <ToggleButton
             android:id="@+id/table1"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/table"
             android:text="ToggleButton"
             android:textOff=""
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/table1"
             android:text="Table 1"
-            android:textSize="30dp" />
+            android:textSize="20dp" />
     </RelativeLayout>
 
     <RelativeLayout>

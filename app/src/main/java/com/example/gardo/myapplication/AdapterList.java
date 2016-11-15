@@ -48,7 +48,7 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
     private ArrayList<FoodModel> food;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private StorageReference storage = FirebaseStorage.getInstance().getReference();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public AdapterList(Activity context, ArrayList<FoodModel> food) {
         super(context, R.layout.list_single_item, food);
@@ -79,7 +79,9 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
         holder.img = (ImageView) rowView.findViewById(R.id.img);
         holder.price_text = (TextView) rowView.findViewById(R.id.price);
         holder.txtTitle.setText(food.get(position).getName());
-        Glide.with(getContext()).using(new FirebaseImageLoader()).load(storage.child("menu/"+food.get(position).getImg())).into(holder.img);
+        String path = "Menu/" + food.get(position).getImg();
+        StorageReference foodRef = storage.getReference(path);
+        Glide.with(rowView.getContext()).load(food.get(position).getImg()).into(holder.img);
         holder.price_text.setText("$" + food.get(position).getPrice());
         holder.number.setText(Integer.toString(food.get(position).getQuantity()));
         holder.item.setOnClickListener(new View.OnClickListener() {
