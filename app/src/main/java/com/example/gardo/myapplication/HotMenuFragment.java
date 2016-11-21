@@ -108,7 +108,8 @@ public class HotMenuFragment extends Fragment{
                     String img = String.valueOf(map.get("img"));
                     Double price = Double.valueOf(String.valueOf(map.get("price")));
                     Long like = Long.valueOf(String.valueOf(map.get("like")));
-                    FoodModel item = new FoodModel(name, img, price, 0);
+                    String catagory = (String) map.get("catagory");
+                    FoodModel item = new FoodModel(name, img, price, 0, catagory);
                     item.setLike(like);
                     foodList.add(item);
                 }

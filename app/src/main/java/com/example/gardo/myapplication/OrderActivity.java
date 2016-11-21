@@ -70,7 +70,8 @@ public class OrderActivity extends AppCompatActivity {
                     String img = String.valueOf(map.get("img"));
                     Double price = Double.valueOf(String.valueOf(map.get("price")));
                     Integer quantity = Integer.valueOf(String.valueOf(map.get("quantity")));
-                    FoodModel item = new FoodModel(name, img, price, quantity);
+                    String catagory = (String) map.get("catagory");
+                    FoodModel item = new FoodModel(name, img, price, quantity, catagory);
                     total_d += price * quantity;
                     temp.add(item);
                 }

@@ -77,7 +77,8 @@ public class FavoriteFragment extends Fragment {
                     String name = (String) map.get("name");
                     String img = String.valueOf(map.get("img"));
                     Double price = Double.valueOf(String.valueOf(map.get("price")));
-                    FoodModel item = new FoodModel(name, img, price, 0);
+                    String catagory = (String) map.get("catagory");
+                    FoodModel item = new FoodModel(name, img, price, 0, catagory);
                     foodList.add(item);
                 }
                 adapter.notifyDataSetChanged();

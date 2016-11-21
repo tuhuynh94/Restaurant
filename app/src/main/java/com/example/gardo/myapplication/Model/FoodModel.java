@@ -1,17 +1,27 @@
 package com.example.gardo.myapplication.Model;
 
 public class FoodModel implements Comparable<FoodModel>{
+    private String catagory;
     private Integer quantity;
     private String name;
     private String img;
     private Double price;
     private Long like;
 
-    public FoodModel(String name, String img, Double price, Integer quantity) {
+    public FoodModel(String name, String img, Double price, Integer quantity, String catagory) {
         this.name = name;
         this.img = img;
         this.price = price;
         this.quantity = quantity;
+        this.catagory = catagory;
+    }
+
+    public String getCatagory() {
+        return catagory;
+    }
+
+    public void setCatagory(String catagory) {
+        this.catagory = catagory;
     }
 
     public Integer getQuantity() {
