@@ -111,8 +111,8 @@ public class MainActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new MenuFragment(), "MENU");
-        viewPagerAdapter.addFragment(new HotMenuFragment(), "HOT MENU");
-        viewPagerAdapter.addFragment(new FavoriteFragment(), "FAVORITE MENU");
+        viewPagerAdapter.addFragment(new HotMenuFragment(), "HOT");
+        viewPagerAdapter.addFragment(new FavoriteFragment(), "FAVORITE");
         viewPagerAdapter.addFragment(new CouponFragment(), "COUPON");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

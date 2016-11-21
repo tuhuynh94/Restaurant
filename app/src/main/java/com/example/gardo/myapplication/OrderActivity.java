@@ -90,11 +90,11 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
         Button confirm = (Button) findViewById(R.id.confirm_order);
-        Button back = (Button) findViewById(R.id.checkout);
-        back.setOnClickListener(new View.OnClickListener() {
+        Button checkout = (Button) findViewById(R.id.checkout);
+        checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(OrderActivity.this, MainActivity.class);
+                Intent i = new Intent(OrderActivity.this, CheckoutActivity.class);
                 startActivity(i);
             }
         });

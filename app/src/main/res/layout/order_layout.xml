@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <GridView
         android:layout_width="match_parent"
@@ -14,14 +15,15 @@
     <ListView
     android:id="@+id/list_order"
     android:layout_width="match_parent"
-    android:layout_height="370dp" />
+    android:layout_height="323dp"
+        android:layout_weight="0.26" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/l_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,17 +33,21 @@
                 android:id="@+id/text_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Subtotal:      "
+                android:text="Subtotal:"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="70dp"
                 android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:text="0"
+                android:layout_marginRight="10dp"
                 android:textSize="20dp" />
-        </LinearLayout>
-        <LinearLayout
+        </RelativeLayout>
+        <RelativeLayout
             android:id="@+id/l_tax"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,18 +58,22 @@
                 android:id="@+id/text_tax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tax:      "
+                android:text="Tax:"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="70dp"
                 android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/tax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:text="0"
+                android:layout_marginRight="10dp"
                 android:textSize="20dp" />
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/l_discount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,18 +84,22 @@
                 android:id="@+id/text_discount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Discount:      "
+                android:text="Discount:"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="70dp"
                 android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/discount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:text="0"
+                android:layout_marginRight="10dp"
                 android:textSize="20dp" />
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -95,16 +109,20 @@
                 android:id="@+id/text_grand_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total:      "
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="70dp"
+                android:text="Total:"
                 android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/grand_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:text="0"
+                android:layout_marginRight="10dp"
                 android:textSize="20dp" />
-        </LinearLayout>
+        </RelativeLayout>
 
         <Button
             android:text="  Confirm "
