@@ -67,10 +67,11 @@ public class FavoriteFragment extends Fragment {
 
     private void loadFavoriteFood() {
         DatabaseReference user = mDatabase.child("user").child(mAuth.getCurrentUser().getUid()).child("favorite");
-        user.addListenerForSingleValueEvent(new ValueEventListener() {
+        user.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
+                foodList.clear();
                 while (iterator.hasNext()){
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot)iterator.next()).getValue();
                     String name = (String) map.get("name");

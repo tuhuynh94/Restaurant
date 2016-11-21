@@ -15,15 +15,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
+    private boolean check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +79,28 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInAnonymously().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     FirebaseUser user = mAuth.getCurrentUser();
+                    mDatabase = FirebaseDatabase.getInstance().getReference();
+                    DatabaseReference ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            check = dataSnapshot.hasChildren();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                    if(!check){
+                        if(mAuth.getCurrentUser().isAnonymous()){
+                            ref.child("Display Name").setValue("");
+                            ref.child("Email").setValue("");
+                            ref.child("Role").setValue("Anynomous");
+                        }
+                    }
                     if(user != null) {
                         String userID = user.getUid().toString();
                         Toast.makeText(getApplicationContext(), "guest-" + userID.substring(userID.length() - 4, userID.length()), Toast.LENGTH_SHORT).show();

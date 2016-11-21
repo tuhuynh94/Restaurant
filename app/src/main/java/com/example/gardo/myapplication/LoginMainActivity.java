@@ -18,8 +18,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginMainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -27,6 +30,7 @@ public class LoginMainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText email, password;
     private Button sign_in;
+    private boolean check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +76,37 @@ public class LoginMainActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         mDatabase = FirebaseDatabase.getInstance().getReference();
+                                        DatabaseReference ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+                                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                check = dataSnapshot.hasChildren();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                        if(!check){
+                                            String displayName = mAuth.getCurrentUser().getDisplayName();
+                                            String email = mAuth.getCurrentUser().getEmail();
+                                            if(displayName != null) {
+                                                ref.child("Display Name").setValue(displayName);
+                                            }
+                                            else{
+                                                ref.child("Display Name").setValue("");
+                                            }
+                                            if(email != null) {
+                                                ref.child("Email").setValue(email);
+                                            }
+                                            else{
+                                                ref.child("Email").setValue("");
+                                            }
+                                            if(!mAuth.getCurrentUser().isAnonymous()){
+                                                ref.child("Role").setValue("User");
+                                            }
+                                        }
                                         mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
                                         if (!task.isSuccessful()) {
                                             Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();

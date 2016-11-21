@@ -1,6 +1,9 @@
 package com.example.gardo.myapplication;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +26,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,6 +69,9 @@ public class HotMenuFragment extends Fragment{
         adapter = new AdapterList(this.getActivity(), hotList);
         list_view = (ListView) root.findViewById(R.id.list_hot_menu);
         swipe = (SwipeRefreshLayout) root.findViewById(R.id.refresh_hot_menu);
+//        String path  = ("https://firebasestorage.googleapis.com/v0/b/restaurant-d8ad0.appspot.com/o/Menu%2Fbianca.jpg?alt=media&token=32111f26-8ad0-4a6b-8209-0d116ca45460");
+//        new DownLoadImageTask(list_view).execute(path);
+
         list_view.setAdapter(adapter);
         loadHotFood();
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -86,10 +96,12 @@ public class HotMenuFragment extends Fragment{
 
     private void loadHotFood() {
         final DatabaseReference foodRef = mDatabase.child("food");
-        foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        foodRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
+                foodList.clear();
+                hotList.clear();
                 while (iterator.hasNext()) {
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot) iterator.next()).getValue();
                     String name = (String) map.get("name");
@@ -123,5 +135,27 @@ public class HotMenuFragment extends Fragment{
             }
         });
     }
-
+//    private class DownLoadImageTask extends AsyncTask<String,Void,Bitmap>{
+//        ListView imageView;
+//
+//        public DownLoadImageTask(ListView imageView){
+//            this.imageView = imageView;
+//        }
+//        protected Bitmap doInBackground(String...urls){
+//            String urlOfImage = urls[0];
+//            Bitmap logo = null;
+//            try{
+//                InputStream is = new URL(urlOfImage).openStream();
+//                logo = BitmapFactory.decodeStream(is);
+//            }catch(Exception e){
+//                e.printStackTrace();
+//            }
+//            return logo;
+//        }
+//
+//        protected void onPostExecute(Bitmap result){
+//            BitmapDrawable back = new BitmapDrawable(getResources(), result);
+//            imageView.setBackground(back);
+//        }
+//    }
 }

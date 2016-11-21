@@ -16,10 +16,15 @@ import android.widget.Toast;
 
 import com.example.gardo.myapplication.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by gardo on 16/11/2016.
@@ -31,6 +36,7 @@ public class DiaglogModel extends DialogFragment {
     ListView list;
     FirebaseAuth mAuth;
     ArrayList<Table> tables;
+    TableModel adapter;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -38,42 +44,55 @@ public class DiaglogModel extends DialogFragment {
         v = inflater.inflate(R.layout.diaglog_table, null);
         mAuth = FirebaseAuth.getInstance();
         tables = new ArrayList<>();
-        tables.add(new Table("Table 1", false));
-        tables.add(new Table("Table 2", false));
-        tables.add(new Table("Table 3", false));
-        tables.add(new Table("Table 4", false));
-        tables.add(new Table("Table 5", false));
-        tables.add(new Table("Table 6", false));
-        final TableModel adapter = new TableModel(getActivity(), tables);
+        adapter = new TableModel(getActivity(), tables);
+        loadTable();
         list = (ListView) v.findViewById(R.id.list_table);
         Log.v("list", list.toString());
         list.setAdapter(adapter);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Table table = (Table) list.getItemAtPosition(position);
-                if(!table.getStatus()){
-                    FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
-                    tables.set(position, new Table(table.getTable_name(), true));
-                    adapter.notifyDataSetChanged();
-                }
-                else{
-                    Toast.makeText(v.getContext(), "This table is using", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(v).setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                        Table table = (Table) list.getItemAtPosition(list.getCheckedItemPosition());
+                        if(!table.getStatus()){
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
+                        }
+                        else{
+                            Toast.makeText(v.getContext(), "This table is using", Toast.LENGTH_SHORT).show();
+                        }
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
         return builder.create();
+    }
+
+    private void loadTable() {
+        FirebaseDatabase.getInstance().getReference().child("Table").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterator iterator = dataSnapshot.getChildren().iterator();
+                while (iterator.hasNext()) {
+                    DataSnapshot data = (DataSnapshot) iterator.next();
+                    String val = (String) data.getValue();
+                    if(val.equals("")){
+                        Table table = new Table(data.getKey(), false);
+                        tables.add(table);
+                    }
+                    else{
+                        Table table = new Table(data.getKey(), true);
+                        tables.add(table);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

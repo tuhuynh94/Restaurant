@@ -61,6 +61,17 @@ public class TableModel extends ArrayAdapter<Table> {
         }
         else {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table").child(tables.get(position).getTable_name());
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    id = (String) dataSnapshot.getValue();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
             if(id == mAuth.getCurrentUser().getUid()){
                 holder.status.setText("Using");
                 holder.status.setTextColor(Color.YELLOW);

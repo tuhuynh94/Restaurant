@@ -4,39 +4,22 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
             android:title="Menu">
             <menu>
                 <item
                     android:id="@+id/nav_home"
-                    android:icon="@drawable/ic_account_circle_black_24dp"
-                    android:title="HOME">
+                    android:title="Main Menu">
 
                 </item>
                 <item
-                    android:id="@+id/nav_antipasti"
-                    android:icon="@drawable/ic_menu_share"
-                    android:title="ANTIPASTI" />
+                    android:id="@+id/nav_main"
+                    android:title="Main food" />
                 <item
-                    android:id="@+id/nav_pizza"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="PIZZA" />
+                    android:id="@+id/nav_dessert"
+                    android:title="Dessert" />
                 <item
-                    android:id="@+id/nav_pasta"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="PASTA RISOTTO" />
-                <item
-                    android:id="@+id/nav_primi"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="PRIMI" />
-                <item
-                    android:id="@+id/nav_secondi"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="SECONDI" />
-                <item
-                    android:id="@+id/nav_dolci"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="DOLCI" />
+                    android:id="@+id/nav_drink"
+                    android:title="Drink" />
                 <item android:id="@+id/update_menu"
                     android:title="UPDATE MENU"
                     android:visible="false"/>

@@ -90,7 +90,7 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
         Button confirm = (Button) findViewById(R.id.confirm_order);
-        Button back = (Button) findViewById(R.id.back_main);
+        Button back = (Button) findViewById(R.id.checkout);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

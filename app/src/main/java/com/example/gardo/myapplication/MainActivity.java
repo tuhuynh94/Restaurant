@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter.addFragment(new MenuFragment(), "MENU");
         viewPagerAdapter.addFragment(new HotMenuFragment(), "HOT MENU");
         viewPagerAdapter.addFragment(new FavoriteFragment(), "FAVORITE MENU");
+        viewPagerAdapter.addFragment(new CouponFragment(), "COUPON");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -166,15 +167,11 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             // Handle the camera action
-        } else if (id == R.id.nav_primi) {
-
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_antipasti) {
+        } else if (id == R.id.nav_main) {
 
-        } else if (id == R.id.nav_pasta) {
-
-        } else if (id == R.id.nav_dolci) {
+        } else if (id == R.id.nav_drink) {
 
         }
         else if (id == R.id.sign_out){
