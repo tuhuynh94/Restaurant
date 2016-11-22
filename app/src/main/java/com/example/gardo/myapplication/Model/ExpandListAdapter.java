@@ -1,6 +1,7 @@
 package com.example.gardo.myapplication.Model;
 
 import android.app.Activity;
+import android.app.LauncherActivity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.text.Editable;
@@ -38,32 +39,30 @@ import java.util.Map;
  */
 
 public class ExpandListAdapter extends BaseExpandableListAdapter {
-    private Context context;
+    private Activity context;
     private ArrayList<CatagoryFood> food;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private LayoutInflater inflater;
 
-    public ExpandListAdapter(Context context, ArrayList<CatagoryFood> food) {
+    public ExpandListAdapter(Activity context, ArrayList<CatagoryFood> food) {
         this.context = context;
         this.food = food;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getGroupCount() {
-        return 0;
+        return food.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return 0;
+        return food.get(groupPosition).food.size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return null;
+        return food.get(groupPosition);
     }
 
     @Override
@@ -73,40 +72,36 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getGroupId(int groupPosition) {
-        return 0;
+        return groupPosition;
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return 0;
+        return childPosition;
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        if(convertView == null){
-            convertView = inflater.inflate(R.layout.catagory_layout, null);
-        }
+        LayoutInflater inflater = context.getLayoutInflater();
+        final View row = inflater.inflate(R.layout.catagory_layout, null, true);
         CatagoryFood group = (CatagoryFood) getGroup(groupPosition);
-        TextView text = (TextView) convertView.findViewById(R.id.catagory);
+        TextView text = (TextView) row.findViewById(R.id.catagory);
         String name = group.Name;
         text.setText(name);
-        return convertView;
+        return row;
     }
     DatabaseReference user;
-    FoodModel child;
     @Override
-    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        if(convertView == null){
-            convertView = inflater.inflate(R.layout.list_single_item, null);
-        }
+    public View getChildView(final int groupPosition,final int childPosition, boolean isLastChild, View convertView,final ViewGroup parent) {
+        LayoutInflater inflater = context.getLayoutInflater();
         final View rowView = inflater.inflate(R.layout.list_single_item, null, true);
-        child = (FoodModel) getChild(groupPosition, childPosition);
-        final Holder holder = new Holder();
+        final HolderExpand holder = new HolderExpand();
+        final FoodModel child = (FoodModel) food.get(groupPosition).food.get(childPosition);
         holder.txtTitle = (TextView) rowView.findViewById(R.id.txt);
         holder.number = (TextView) rowView.findViewById(R.id.quantity);
         holder.like = (ToggleButton) rowView.findViewById(R.id.like);
@@ -117,6 +112,8 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
         String path = "Menu/" + child.getImg();
         StorageReference foodRef = storage.getReference(path);
         Glide.with(rowView.getContext()).load(child.getImg()).into(holder.img);
+        holder.price_text.setText("$" + child.getPrice());
+        holder.number.setText(Integer.toString(child.getQuantity()));
         holder.price_text.setText("$" + child.getPrice());
         holder.number.setText(Integer.toString(child.getQuantity()));
         holder.item.setOnClickListener(new View.OnClickListener() {
@@ -269,7 +266,7 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
-    public class Holder {
+    public class HolderExpand {
         private Button increase, decrease;
         private ToggleButton like, favorite;
         private TextView number;

@@ -105,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                         String userID = user.getUid().toString();
                         Toast.makeText(getApplicationContext(), "guest-" + userID.substring(userID.length() - 4, userID.length()), Toast.LENGTH_SHORT).show();
                     }
+                    mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
                 }
             }
         });

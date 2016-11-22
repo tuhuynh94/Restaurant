@@ -7,10 +7,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ public class DiaglogModel extends DialogFragment {
     FirebaseAuth mAuth;
     ArrayList<Table> tables;
     TableModel adapter;
+    Button confirm;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -45,27 +48,35 @@ public class DiaglogModel extends DialogFragment {
         mAuth = FirebaseAuth.getInstance();
         tables = new ArrayList<>();
         adapter = new TableModel(getActivity(), tables);
+        View view = inflater.inflate(R.layout.order_layout, null);
+        confirm = (Button) view.findViewById(R.id.confirm_order);
         loadTable();
         list = (ListView) v.findViewById(R.id.list_table);
         Log.v("list", list.toString());
         list.setAdapter(adapter);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(v).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                        Table table = (Table) list.getItemAtPosition(list.getCheckedItemPosition());
-                        if(!table.getStatus()){
-                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
-                        }
-                        else{
-                            Toast.makeText(v.getContext(), "This table is using", Toast.LENGTH_SHORT).show();
-                        }
-            }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        boolean check = false;
+        if(!check) {
+            builder.setView(v).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Table table = (Table) list.getItemAtPosition(list.getCheckedItemPosition());
+                    if (!table.getStatus()) {
+                        FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
+                        confirm.setText("CHANGE TABLE");
+                    } else {
+                        Toast.makeText(v.getContext(), "This table is using", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+        }
+        else{
+
+        }
         return builder.create();
     }
 

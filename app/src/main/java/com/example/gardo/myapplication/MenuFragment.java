@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,19 +18,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.gardo.myapplication.Model.CatagoryFood;
 import com.example.gardo.myapplication.Model.ExpandListAdapter;
 import com.example.gardo.myapplication.Model.FoodModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,6 +64,7 @@ public class MenuFragment extends Fragment{
     private List<String>filteredData = null;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+    private DatabaseReference user;
 //    String[] food;
 //    Integer[] imageId;
 //    Double[] price;
@@ -63,6 +72,7 @@ public class MenuFragment extends Fragment{
     List<HashMap<String,String>> aList;
     ArrayList<FoodModel> foodList;
     ArrayList<CatagoryFood> catagoryFoods;
+    CatagoryFood main,dessert,drink;
     public MenuFragment() {
         // Required empty public constructor
     }
@@ -75,7 +85,7 @@ public class MenuFragment extends Fragment{
 //        foodList.add(new FoodModel("Bianca", R.drawable.bianca, 2.5, 0));
 //        foodList.add(new FoodModel("Bruschetta", R.drawable.bruschetta, 10.5, 0));
 //        foodList.add(new FoodModel("Piatto", R.drawable.piatto, 5.5, 0));
-        View root = inflater.inflate(R.layout.fragment_menu, container, false);
+        View root = inflater.inflate(R.layout.fragment_menu_temp, container, false);
         setHasOptionsMenu(true);
         final DatabaseReference foodRef = mDatabase.child("food");
 //        adapter = new AdapterList(this.getActivity(), foodList);
@@ -83,11 +93,6 @@ public class MenuFragment extends Fragment{
 //        list_view.setAdapter(adapter);
         ExpandableListView expandableListView = (ExpandableListView) root.findViewById(R.id.expand_list);
         catagoryFoods = new ArrayList<>();
-        adapter = new ExpandListAdapter(this.getActivity(), catagoryFoods);
-        expandableListView.setAdapter(adapter);
-        final CatagoryFood main = new  CatagoryFood("Main");
-        final CatagoryFood dessert = new  CatagoryFood("Dessert");
-        final CatagoryFood drink = new  CatagoryFood("Drink");
         foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -108,6 +113,7 @@ public class MenuFragment extends Fragment{
                     else if(catagory.equals("drink")){
                         drink.food.add(item);
                     }
+//                    foodList.add(item);
                 }
                 catagoryFoods.add(main);
                 catagoryFoods.add(dessert);
@@ -120,6 +126,11 @@ public class MenuFragment extends Fragment{
 
             }
         });
+        adapter = new ExpandListAdapter(this.getActivity(), catagoryFoods);
+        expandableListView.setAdapter(adapter);
+        main = new  CatagoryFood("Main");
+        dessert = new  CatagoryFood("Dessert");
+        drink = new  CatagoryFood("Drink");
         dbchange();
         return root;
     }
@@ -156,5 +167,21 @@ public class MenuFragment extends Fragment{
     public void onStart() {
         super.onStart();
 
+    }
+    public class HolderMenu {
+        private Button increase, decrease;
+        private ToggleButton like, favorite;
+        private TextView number;
+        RelativeLayout item;
+        ImageView img;
+        TextView txtTitle, price_text;
+        Button add;
+    }
+
+    @Override
+    public void onDestroy() {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+        super.onDestroy();
     }
 }

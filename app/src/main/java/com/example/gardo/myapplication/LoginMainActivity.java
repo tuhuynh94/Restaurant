@@ -66,7 +66,7 @@ public class LoginMainActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if(email.getText().toString().equals("admin@123.com") && password.getText().toString().equals("admin123")){
                         Toast.makeText(LoginMainActivity.this, "Signed with Adminstrator", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+                        Intent i = new Intent(LoginMainActivity.this, AdminActivity.class);
                         i.putExtra("admin", "admin");
                         startActivity(i);
                     }

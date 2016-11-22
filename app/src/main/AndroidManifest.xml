@@ -33,7 +33,8 @@
         <activity android:name=".LoginMainActivity" />
         <activity android:name=".Register" />
         <activity android:name=".OrderActivity" />
-        <activity android:name=".CheckoutActivity"></activity>
+        <activity android:name=".CheckoutActivity" />
+        <activity android:name=".AdminActivity"></activity>
     </application>
 
 </manifest>
