@@ -60,11 +60,12 @@ public class TableModel extends ArrayAdapter<Table> {
             holder.status.setTextColor(Color.GREEN);
         }
         else {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table").child(tables.get(position).getTable_name());
-            ref.addValueEventListener(new ValueEventListener() {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Table");
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     id = (String) dataSnapshot.getValue();
+                    notifyDataSetChanged();
                 }
 
                 @Override
@@ -72,7 +73,7 @@ public class TableModel extends ArrayAdapter<Table> {
 
                 }
             });
-            if(id == mAuth.getCurrentUser().getUid()){
+            if(id != null && id.equals(tables.get(position).getTable_name())){
                 holder.status.setText("Using");
                 holder.status.setTextColor(Color.YELLOW);
             }

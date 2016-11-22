@@ -31,6 +31,8 @@ public class LoginMainActivity extends AppCompatActivity {
     private EditText email, password;
     private Button sign_in;
     private boolean check;
+    private String role;
+    DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +76,32 @@ public class LoginMainActivity extends AppCompatActivity {
                         mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                                 .addOnCompleteListener(LoginMainActivity.this, new OnCompleteListener<AuthResult>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                    public void onComplete(@NonNull final Task<AuthResult> task) {
                                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                                        DatabaseReference ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+                                        ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
                                         ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
                                                 check = dataSnapshot.hasChildren();
+                                                if(!check){
+                                                    String displayName = mAuth.getCurrentUser().getDisplayName();
+                                                    String email = mAuth.getCurrentUser().getEmail();
+                                                    if(displayName != null) {
+                                                        ref.child("Display Name").setValue(displayName);
+                                                    }
+                                                    else{
+                                                        ref.child("Display Name").setValue("");
+                                                    }
+                                                    if(email != null) {
+                                                        ref.child("Email").setValue(email);
+                                                    }
+                                                    else{
+                                                        ref.child("Email").setValue("");
+                                                    }
+                                                    if(!mAuth.getCurrentUser().isAnonymous()){
+                                                        ref.child("Role").setValue("User");
+                                                    }
+                                                }
                                             }
 
                                             @Override
@@ -88,33 +109,33 @@ public class LoginMainActivity extends AppCompatActivity {
 
                                             }
                                         });
-                                        if(!check){
-                                            String displayName = mAuth.getCurrentUser().getDisplayName();
-                                            String email = mAuth.getCurrentUser().getEmail();
-                                            if(displayName != null) {
-                                                ref.child("Display Name").setValue(displayName);
-                                            }
-                                            else{
-                                                ref.child("Display Name").setValue("");
-                                            }
-                                            if(email != null) {
-                                                ref.child("Email").setValue(email);
-                                            }
-                                            else{
-                                                ref.child("Email").setValue("");
-                                            }
-                                            if(!mAuth.getCurrentUser().isAnonymous()){
-                                                ref.child("Role").setValue("User");
-                                            }
-                                        }
                                         mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
-                                        if (!task.isSuccessful()) {
-                                            Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
-                                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
-                                            startActivity(i);
-                                        }
+                                        ref.child("Role").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                role = (String) dataSnapshot.getValue();
+                                                if (!task.isSuccessful()) {
+                                                    Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    if(role != null && role.equals("User")) {
+                                                        Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
+                                                        Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+                                                        startActivity(i);
+                                                    }
+                                                    else if(role != null && role.equals("Staff")){
+                                                        Toast.makeText(LoginMainActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
+                                                        Intent i = new Intent(LoginMainActivity.this, StaffActivity.class);
+                                                        i.putExtra("staff", "staff");
+                                                        startActivity(i);
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
                                     }
                                 });
                     }

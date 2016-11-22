@@ -76,6 +76,13 @@ public class MenuFragment extends Fragment{
     public MenuFragment() {
         // Required empty public constructor
     }
+    public int GetDipsFromPixel(float pixels)
+    {
+        // Get the screen's density scale
+        final float scale = getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+        return (int) (pixels * scale + 0.5f);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
@@ -92,6 +99,8 @@ public class MenuFragment extends Fragment{
 //        list_view = (ListView) root.findViewById(R.id.list_food);
 //        list_view.setAdapter(adapter);
         ExpandableListView expandableListView = (ExpandableListView) root.findViewById(R.id.expand_list);
+        int width = getResources().getDisplayMetrics().widthPixels;
+        expandableListView.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
         catagoryFoods = new ArrayList<>();
         foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -147,20 +156,22 @@ public class MenuFragment extends Fragment{
 
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
-        MenuItem mSearchMenuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
+        if(getActivity().getIntent().getExtras().equals("staff")) {
+            MenuItem mSearchMenuItem = menu.findItem(R.id.action_search);
+            SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    return false;
+                }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
+                @Override
+                public boolean onQueryTextChange(String s) {
 //                adapter.getFilter().filter(s);
-                return false;
-            }
-        });
+                    return false;
+                }
+            });
+        }
     }
 
     @Override

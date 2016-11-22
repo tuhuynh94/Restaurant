@@ -196,7 +196,7 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
             @Override
             public void onClick(View v) {
                 if(holder.add.getText().toString().equals("ADD")) {
-                    FoodModel item = new FoodModel(food.get(position).getName(), food.get(position).getImg(), food.get(position).getPrice(), 0, food.get(position).getCatagory());
+                    FoodModel item = new FoodModel(food.get(position).getName(), food.get(position).getImg(), food.get(position).getPrice(), food.get(position).getQuantity(), food.get(position).getCatagory());
                     if(food.get(position).getQuantity() > 0) {
                         userOrder.child(food.get(position).getName()).setValue(item);
                         holder.add.setText("REMOVE");

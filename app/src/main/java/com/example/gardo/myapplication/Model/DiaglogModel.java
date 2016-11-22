@@ -3,6 +3,7 @@ package com.example.gardo.myapplication.Model;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.gardo.myapplication.OrderActivity;
 import com.example.gardo.myapplication.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +41,8 @@ public class DiaglogModel extends DialogFragment {
     FirebaseAuth mAuth;
     ArrayList<Table> tables;
     TableModel adapter;
-    Button confirm;
+    boolean hasTable;
+    String table_check;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -48,8 +51,6 @@ public class DiaglogModel extends DialogFragment {
         mAuth = FirebaseAuth.getInstance();
         tables = new ArrayList<>();
         adapter = new TableModel(getActivity(), tables);
-        View view = inflater.inflate(R.layout.order_layout, null);
-        confirm = (Button) view.findViewById(R.id.confirm_order);
         loadTable();
         list = (ListView) v.findViewById(R.id.list_table);
         Log.v("list", list.toString());
@@ -62,8 +63,18 @@ public class DiaglogModel extends DialogFragment {
                 public void onClick(DialogInterface dialog, int which) {
                     Table table = (Table) list.getItemAtPosition(list.getCheckedItemPosition());
                     if (!table.getStatus()) {
-                        FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
-                        confirm.setText("CHANGE TABLE");
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Table");
+                        if(!hasTable) {
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
+                            ref.setValue(table.getTable_name());
+                            Button confirm = (Button) getActivity().findViewById(R.id.confirm_order);
+                            confirm.setText("CHANGE TABLE");
+                        }
+                        else{
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).removeValue();
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
+                            ref.setValue(table.getTable_name());
+                        }
                     } else {
                         Toast.makeText(v.getContext(), "This table is using", Toast.LENGTH_SHORT).show();
                     }
