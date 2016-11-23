@@ -156,7 +156,8 @@ public class MenuFragment extends Fragment{
 
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
-        if(getActivity().getIntent().getExtras().equals("staff")) {
+        String check = getActivity().getIntent().getStringExtra("staff");
+        if(check == null || !check.equals("staff")) {
             MenuItem mSearchMenuItem = menu.findItem(R.id.action_search);
             SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
