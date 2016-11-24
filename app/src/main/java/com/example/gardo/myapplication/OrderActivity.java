@@ -90,7 +90,7 @@ public class OrderActivity extends AppCompatActivity {
 
             }
         });
-        Button confirm = (Button) findViewById(R.id.confirm_order);
+        final Button confirm = (Button) findViewById(R.id.confirm_order);
         Button checkout = (Button) findViewById(R.id.checkout);
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +104,21 @@ public class OrderActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DiaglogModel myDiaglog = new DiaglogModel();
                 myDiaglog.show(getFragmentManager(), "show_diaglod");
+            }
+        });
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                if(map!= null && map.containsValue(mAuth.getCurrentUser().getUid())){
+                    confirm.setText("CHANGE TABLE");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

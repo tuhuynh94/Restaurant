@@ -27,8 +27,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by gardo on 16/11/2016.
@@ -41,8 +44,10 @@ public class DiaglogModel extends DialogFragment {
     FirebaseAuth mAuth;
     ArrayList<Table> tables;
     TableModel adapter;
-    boolean hasTable;
+    boolean hasTable = false;
     String table_check;
+    Table table;
+    boolean check;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -56,38 +61,50 @@ public class DiaglogModel extends DialogFragment {
         Log.v("list", list.toString());
         list.setAdapter(adapter);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        boolean check = false;
-        if(!check) {
-            builder.setView(v).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+        check = false;
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                hasTable = map.containsValue(mAuth.getCurrentUser().getUid());
+                if (map != null) {
+                    table_check = getKeysByValue(map, mAuth.getCurrentUser().getUid()).toString();
+                }
+                check = true;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(v.getContext(), "The read failed: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setView(v).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(check) {
                     Table table = (Table) list.getItemAtPosition(list.getCheckedItemPosition());
-                    if (!table.getStatus()) {
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Table");
-                        if(!hasTable) {
+                    if (table != null && !table.getStatus()) {
+                        if (!hasTable) {
                             FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
-                            ref.setValue(table.getTable_name());
                             Button confirm = (Button) getActivity().findViewById(R.id.confirm_order);
                             confirm.setText("CHANGE TABLE");
-                        }
-                        else{
-                            FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).removeValue();
+                        } else {
                             FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
-                            ref.setValue(table.getTable_name());
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).setValue("");
                         }
-                    } else {
+                    } else if(table != null && table.getStatus()){
                         Toast.makeText(v.getContext(), "This table is using", Toast.LENGTH_SHORT).show();
                     }
                 }
-            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-        }
-        else{
-
-        }
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Table");
+                ref.setValue(table_check);
+            }
+        });
         return builder.create();
     }
 
@@ -99,11 +116,10 @@ public class DiaglogModel extends DialogFragment {
                 while (iterator.hasNext()) {
                     DataSnapshot data = (DataSnapshot) iterator.next();
                     String val = (String) data.getValue();
-                    if(val.equals("")){
+                    if (val.equals("")) {
                         Table table = new Table(data.getKey(), false);
                         tables.add(table);
-                    }
-                    else{
+                    } else {
                         Table table = new Table(data.getKey(), true);
                         tables.add(table);
                     }
@@ -116,5 +132,16 @@ public class DiaglogModel extends DialogFragment {
 
             }
         });
+    }
+
+    public static <T, E> String getKeysByValue(Map<T, E> map, E value) {
+        String keys = "";
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                keys = entry.getKey().toString();
+                break;
+            }
+        }
+        return keys;
     }
 }

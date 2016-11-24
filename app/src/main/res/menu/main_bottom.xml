@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.gardo.myapplication.MainActivity">
-
-    <item
-        android:id="@+id/action_chat"
-        android:icon="@drawable/ic_chat_black_24dp"
-        android:orderInCategory="101"
-        android:title="Chat"
-        app:showAsAction="always" />
     <item
         android:id="@+id/action_notify"
         android:icon="@drawable/ic_notifications_none_black_24dp"

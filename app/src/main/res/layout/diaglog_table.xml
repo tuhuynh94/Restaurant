@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:clickable="false"
+    android:focusable="false">
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/list_table"
         android:choiceMode="singleChoice"
-        android:listSelector="@color/pressed_color"/>
+        android:listSelector="@color/pressed_color"
+        android:clickable="false"/>
 </LinearLayout>

@@ -9,12 +9,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/table_name"
-        android:layout_weight="2" />
+        android:layout_weight="2"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:textSize="20dp"/>
 
     <TextView
-        android:text="TextView"
+        android:text="Available"
+        android:textColor="@android:color/holo_green_light"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/table_status"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:textSize="20dp"/>
 </LinearLayout>

@@ -22,26 +22,4 @@
         android:orderInCategory="102"
         android:title="Waiter"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_assessment"
-        android:title="Staff Assessment"
-        android:orderInCategory="103"
-        app:showAsAction="never" >
-
-    </item>
-    <item
-        android:id="@+id/action_feedback"
-        android:title="Feedback"
-        android:orderInCategory="104"
-        app:showAsAction="never" >
-
-    </item>
-    <item
-        android:id="@+id/action_about"
-        android:title="About"
-        android:orderInCategory="105"
-        app:showAsAction="never" >
-
-    </item>
 </menu>

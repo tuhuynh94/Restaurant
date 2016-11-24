@@ -33,12 +33,14 @@ public class TableModel extends ArrayAdapter<Table> {
     private Activity context;
     private FirebaseAuth mAuth;
     String id;
+    boolean check;
 
     public TableModel(Activity context, ArrayList<Table> tables) {
         super(context, R.layout.table_list_item, tables);
         this.context = context;
         this.tables = tables;
     }
+
     public class TableHolder {
         TextView table_name;
         TextView status;
@@ -49,23 +51,28 @@ public class TableModel extends ArrayAdapter<Table> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
         final View rowView = inflater.inflate(R.layout.table_list_item, null, true);
-        TableHolder holder = new TableHolder();
+        final TableHolder holder = new TableHolder();
         holder.table_name = (TextView) rowView.findViewById(R.id.table_name);
         holder.status = (TextView) rowView.findViewById(R.id.table_status);
         Log.v("table", tables.get(position).getTable_name());
         holder.table_name.setText(tables.get(position).getTable_name());
         mAuth = FirebaseAuth.getInstance();
-        if(!tables.get(position).getStatus()){
+        if (!tables.get(position).getStatus()) {
             holder.status.setText("Available");
             holder.status.setTextColor(Color.GREEN);
-        }
-        else {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Table");
+        } else {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table").child(tables.get(position).getTable_name());
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     id = (String) dataSnapshot.getValue();
-                    notifyDataSetChanged();
+                    if (id != null && id.equals(mAuth.getCurrentUser().getUid())) {
+                        holder.status.setText("Using");
+                        holder.status.setTextColor(Color.YELLOW);
+                    } else {
+                        holder.status.setText("Not Available");
+                        holder.status.setTextColor(Color.RED);
+                    }
                 }
 
                 @Override
@@ -73,14 +80,6 @@ public class TableModel extends ArrayAdapter<Table> {
 
                 }
             });
-            if(id != null && id.equals(tables.get(position).getTable_name())){
-                holder.status.setText("Using");
-                holder.status.setTextColor(Color.YELLOW);
-            }
-            else {
-                holder.status.setText("Not Available");
-                holder.status.setTextColor(Color.RED);
-            }
         }
         return rowView;
     }

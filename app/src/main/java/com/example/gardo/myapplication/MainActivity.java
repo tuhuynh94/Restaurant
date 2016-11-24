@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View header = navigationView.getHeaderView(0);
         if(getIntent().getExtras() != null && getIntent().getExtras().get("admin").equals("admin")){
-            navigationView.getMenu().findItem(R.id.update_menu).setVisible(true);
+            navigationView.getMenu().findItem(R.id.admin_title).setVisible(true);
         }
         account_circle = (ImageView) header.findViewById(R.id.account_circle);
         TextView name_info = (TextView) header.findViewById(R.id.name_info);
@@ -165,13 +165,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
+        if (id == R.id.action_assessment) {
             // Handle the camera action
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.action_feedback) {
 
-        } else if (id == R.id.nav_main) {
-
-        } else if (id == R.id.nav_drink) {
+        } else if (id == R.id.action_about) {
 
         }
         else if (id == R.id.sign_out){

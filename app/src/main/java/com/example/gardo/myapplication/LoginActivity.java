@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.pre_login);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.hide();
         mAuth = FirebaseAuth.getInstance();
         Button pre_sign = (Button) findViewById(R.id.type_sign_in);
         mAuth = FirebaseAuth.getInstance();
