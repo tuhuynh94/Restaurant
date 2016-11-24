@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -70,78 +71,80 @@ public class LoginMainActivity extends AppCompatActivity {
             sign_in.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(email.getText().toString().equals("admin@123.com") && password.getText().toString().equals("admin123")){
-                        Toast.makeText(LoginMainActivity.this, "Signed with Adminstrator", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(LoginMainActivity.this, AdminActivity.class);
-                        i.putExtra("admin", "admin");
-                        startActivity(i);
-                    }
-                    else {
-                        mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                                .addOnCompleteListener(LoginMainActivity.this, new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull final Task<AuthResult> task) {
-                                        mDatabase = FirebaseDatabase.getInstance().getReference();
-                                        ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
-                                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                check = dataSnapshot.hasChildren();
-                                                if(!check){
-                                                    String displayName = mAuth.getCurrentUser().getDisplayName();
-                                                    String email = mAuth.getCurrentUser().getEmail();
-                                                    if(displayName != null) {
-                                                        ref.child("Display Name").setValue(displayName);
-                                                    }
-                                                    else{
-                                                        ref.child("Display Name").setValue("");
-                                                    }
-                                                    if(email != null) {
-                                                        ref.child("Email").setValue(email);
-                                                    }
-                                                    else{
-                                                        ref.child("Email").setValue("");
-                                                    }
-                                                    if(!mAuth.getCurrentUser().isAnonymous()){
-                                                        ref.child("Role").setValue("User");
-                                                    }
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-
-                                            }
-                                        });
-                                        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
-                                        ref.child("Role").addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                role = (String) dataSnapshot.getValue();
-                                                if (!task.isSuccessful()) {
-                                                    Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    if(role != null && role.equals("User")) {
-                                                        Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
-                                                        Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
-                                                        startActivity(i);
-                                                    }
-                                                    else if(role != null && role.equals("Staff")){
-                                                        Toast.makeText(LoginMainActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
-                                                        Intent i = new Intent(LoginMainActivity.this, StaffActivity.class);
-                                                        i.putExtra("staff", "staff");
-                                                        startActivity(i);
+                    final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
+                    view.startAnimation(buttonClick);
+                    String e = email.getText().toString();
+                    String p = password.getText().toString();
+                    if (!email.getText().toString().equals("") && !password.getText().toString().equals("")) {
+                        if (email.getText().toString().equals("admin@123.com") && password.getText().toString().equals("admin123")) {
+                            Toast.makeText(LoginMainActivity.this, "Signed with Adminstrator", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(LoginMainActivity.this, AdminActivity.class);
+                            i.putExtra("admin", "admin");
+                            startActivity(i);
+                        } else {
+                            mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                                    .addOnCompleteListener(LoginMainActivity.this, new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull final Task<AuthResult> task) {
+                                            mDatabase = FirebaseDatabase.getInstance().getReference();
+                                            ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+                                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    check = dataSnapshot.hasChildren();
+                                                    if (!check) {
+                                                        String displayName = mAuth.getCurrentUser().getDisplayName();
+                                                        String email = mAuth.getCurrentUser().getEmail();
+                                                        if (displayName != null) {
+                                                            ref.child("Display Name").setValue(displayName);
+                                                        } else {
+                                                            ref.child("Display Name").setValue("");
+                                                        }
+                                                        if (email != null) {
+                                                            ref.child("Email").setValue(email);
+                                                        } else {
+                                                            ref.child("Email").setValue("");
+                                                        }
+                                                        if (!mAuth.getCurrentUser().isAnonymous()) {
+                                                            ref.child("Role").setValue("User");
+                                                        }
                                                     }
                                                 }
-                                            }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
 
-                                            }
-                                        });
-                                    }
-                                });
+                                                }
+                                            });
+                                            mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+                                            ref.child("Role").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    role = (String) dataSnapshot.getValue();
+                                                    if (!task.isSuccessful()) {
+                                                        Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        if (role != null && role.equals("User")) {
+                                                            Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
+                                                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+                                                            startActivity(i);
+                                                        } else if (role != null && role.equals("Staff")) {
+                                                            Toast.makeText(LoginMainActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
+                                                            Intent i = new Intent(LoginMainActivity.this, StaffActivity.class);
+                                                            i.putExtra("staff", "staff");
+                                                            startActivity(i);
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                        }
+                                    });
+                        }
                     }
                 }
             });

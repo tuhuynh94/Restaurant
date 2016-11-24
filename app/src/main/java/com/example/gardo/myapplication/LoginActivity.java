@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
         pre_sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
+                view.startAnimation(buttonClick);
                 Intent i = new Intent(LoginActivity.this, LoginMainActivity.class);
                 startActivity(i);
             }
@@ -77,6 +80,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void sign_anonymous(View view) {
+        final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
+        view.startAnimation(buttonClick);
         mAuth.signInAnonymously().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
