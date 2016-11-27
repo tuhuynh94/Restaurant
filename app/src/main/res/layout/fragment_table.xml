@@ -1,13 +1,53 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.gardo.myapplication.TableFragment">
+    tools:context="com.example.gardo.myapplication.TableFragment"
+    android:background="@color/gray"
+    android:layout_column="3">
 
     <!-- TODO: Update blank fragment layout -->
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
         android:id="@+id/list_table_staff" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_column="3">
+        <TextView
+            android:text="Table Name"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/textView4"
+            android:layout_weight="1"/>
 
-</FrameLayout>
+        <TextView
+            android:text="Status"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/textView5"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="0"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"/>
+    </LinearLayout>
+
+</RelativeLayout>

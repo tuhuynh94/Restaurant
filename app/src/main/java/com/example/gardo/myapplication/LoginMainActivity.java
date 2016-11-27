@@ -1,5 +1,6 @@
 package com.example.gardo.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -82,66 +83,46 @@ public class LoginMainActivity extends AppCompatActivity {
                             i.putExtra("admin", "admin");
                             startActivity(i);
                         } else {
+                            final ProgressDialog mProgress = new ProgressDialog(getApplicationContext());
+                            mProgress.setMessage("Sign with " + email.getText().toString());
                             mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                                     .addOnCompleteListener(LoginMainActivity.this, new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull final Task<AuthResult> task) {
-                                            mDatabase = FirebaseDatabase.getInstance().getReference();
-                                            ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
-                                            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                                    check = dataSnapshot.hasChildren();
-                                                    if (!check) {
-                                                        String displayName = mAuth.getCurrentUser().getDisplayName();
-                                                        String email = mAuth.getCurrentUser().getEmail();
-                                                        if (displayName != null) {
-                                                            ref.child("Display Name").setValue(displayName);
+                                            if(task.isSuccessful()) {
+                                                mDatabase = FirebaseDatabase.getInstance().getReference();
+                                                ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+                                                mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+                                                ref.child("Role").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        role = (String) dataSnapshot.getValue();
+                                                        if (!task.isSuccessful()) {
+                                                            Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                                         } else {
-                                                            ref.child("Display Name").setValue("");
-                                                        }
-                                                        if (email != null) {
-                                                            ref.child("Email").setValue(email);
-                                                        } else {
-                                                            ref.child("Email").setValue("");
-                                                        }
-                                                        if (!mAuth.getCurrentUser().isAnonymous()) {
-                                                            ref.child("Role").setValue("User");
+                                                            if (role != null && role.equals("User")) {
+                                                                Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
+                                                                Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+                                                                startActivity(i);
+                                                            } else if (role != null && role.equals("Staff")) {
+                                                                Toast.makeText(LoginMainActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
+                                                                Intent i = new Intent(LoginMainActivity.this, StaffActivity.class);
+                                                                i.putExtra("staff", "staff");
+                                                                startActivity(i);
+                                                            }
+                                                            mProgress.dismiss();
                                                         }
                                                     }
-                                                }
 
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
 
-                                                }
-                                            });
-                                            mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
-                                            ref.child("Role").addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                                    role = (String) dataSnapshot.getValue();
-                                                    if (!task.isSuccessful()) {
-                                                        Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                                    } else {
-                                                        if (role != null && role.equals("User")) {
-                                                            Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
-                                                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
-                                                            startActivity(i);
-                                                        } else if (role != null && role.equals("Staff")) {
-                                                            Toast.makeText(LoginMainActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
-                                                            Intent i = new Intent(LoginMainActivity.this, StaffActivity.class);
-                                                            i.putExtra("staff", "staff");
-                                                            startActivity(i);
-                                                        }
                                                     }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-
-                                                }
-                                            });
+                                                });
+                                            }
+                                            else{
+                                                Toast.makeText(getApplicationContext(), task.getException().getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     });
                         }

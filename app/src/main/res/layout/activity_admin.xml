@@ -5,7 +5,8 @@
     android:id="@+id/activity_admin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.gardo.myapplication.AdminActivity">
+    tools:context="com.example.gardo.myapplication.AdminActivity"
+    android:background="@color/gray">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

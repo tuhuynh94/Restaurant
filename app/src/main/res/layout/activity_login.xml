@@ -32,11 +32,11 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:ems="16"
-                android:inputType="textEmailAddress"
                 android:selectAllOnFocus="false"
                 android:background="@drawable/email"
                 android:hint="Email"
-                android:gravity="center_vertical|center_horizontal" />
+                android:gravity="center_vertical|center_horizontal"
+                android:inputType="textEmailAddress" />
 
         </TableRow>
 

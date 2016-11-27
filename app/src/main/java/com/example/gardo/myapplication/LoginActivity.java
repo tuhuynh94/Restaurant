@@ -1,5 +1,6 @@
 package com.example.gardo.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         Button pre_sign = (Button) findViewById(R.id.type_sign_in);
         mAuth = FirebaseAuth.getInstance();
-//        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 //        final FirebaseUser userFire = mAuth.getCurrentUser();
 //        final DatabaseReference like = mDatabase.child("user").child(userFire.getUid()).child("like");
         pre_sign.setOnClickListener(new View.OnClickListener() {
@@ -57,10 +58,18 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // User is signed in
-                    Log.d("Auth:", user.getUid());
-                    String userID = user.getUid().toString();
-//                    Toast.makeText(getApplicationContext(), "guest-" + userID.substring(userID.length() - 4, userID.length()), Toast.LENGTH_SHORT).show();
+                    if(mAuth.getCurrentUser().isAnonymous()){
+                        Toast.makeText(getApplicationContext(),"Sign with Anynomous", Toast.LENGTH_SHORT).show();
+                        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(i);
+                    }
+                    else{
+                        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+                        Toast.makeText(getApplicationContext(),"Sign with " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(i);
+                    }
                 }
             }
         };
@@ -82,6 +91,9 @@ public class LoginActivity extends AppCompatActivity {
     public void sign_anonymous(View view) {
         final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
         view.startAnimation(buttonClick);
+        final ProgressDialog mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Sign with Anonymous");
+        mProgress.show();
         mAuth.signInAnonymously().addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -112,10 +124,11 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "guest-" + userID.substring(userID.length() - 4, userID.length()), Toast.LENGTH_SHORT).show();
                     }
                     mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+                    mProgress.dismiss();
+                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(i);
                 }
             }
         });
-        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(i);
     }
 }

@@ -61,7 +61,7 @@ public class TableModel extends ArrayAdapter<Table> {
             holder.status.setText("Available");
             holder.status.setTextColor(Color.GREEN);
         } else {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table").child(tables.get(position).getTable_name());
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table").child(tables.get(position).getTable_name()).child("Customer");
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

@@ -67,9 +67,11 @@ public class DiaglogModel extends DialogFragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                hasTable = map.containsValue(mAuth.getCurrentUser().getUid());
                 if (map != null) {
                     table_check = getKeysByValue(map, mAuth.getCurrentUser().getUid()).toString();
+                    if(table_check != null && !table_check.equals("")){
+                        hasTable = true;
+                    }
                 }
                 check = true;
             }
@@ -86,12 +88,15 @@ public class DiaglogModel extends DialogFragment {
                     Table table = (Table) list.getItemAtPosition(list.getCheckedItemPosition());
                     if (table != null && !table.getStatus()) {
                         if (!hasTable) {
-                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).child("Customer").setValue(mAuth.getCurrentUser().getUid());
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).child("Status").setValue("Confirm Order");
                             Button confirm = (Button) getActivity().findViewById(R.id.confirm_order);
                             confirm.setText("CHANGE TABLE");
                         } else {
-                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).setValue(mAuth.getCurrentUser().getUid());
-                            FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).setValue("");
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).child("Customer").setValue(mAuth.getCurrentUser().getUid());
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).child("Status").setValue("Changed Table");
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).child("Customer").setValue("");
+                            FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).child("Status").setValue("Empty");
                         }
                     } else if(table != null && table.getStatus()){
                         Toast.makeText(v.getContext(), "This table is using", Toast.LENGTH_SHORT).show();
@@ -101,8 +106,7 @@ public class DiaglogModel extends DialogFragment {
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Table");
-                ref.setValue(table_check);
+                dialog.cancel();
             }
         });
         return builder.create();
@@ -114,13 +118,15 @@ public class DiaglogModel extends DialogFragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
                 while (iterator.hasNext()) {
-                    DataSnapshot data = (DataSnapshot) iterator.next();
-                    String val = (String) data.getValue();
-                    if (val.equals("")) {
-                        Table table = new Table(data.getKey(), false);
+                    DataSnapshot tab = (DataSnapshot) iterator.next();
+                    Map<String, Object> map = (Map<String, Object>) tab.getValue();
+                    String customer = (String) map.get("Customer");
+                    String status = (String ) map.get("Status");
+                    if (customer.equals("")) {
+                        Table table = new Table(tab.getKey(), false);
                         tables.add(table);
                     } else {
-                        Table table = new Table(data.getKey(), true);
+                        Table table = new Table(tab.getKey(), true);
                         tables.add(table);
                     }
                 }
@@ -134,10 +140,11 @@ public class DiaglogModel extends DialogFragment {
         });
     }
 
-    public static <T, E> String getKeysByValue(Map<T, E> map, E value) {
+    public static String getKeysByValue(Map<String, Object> map, String value) {
         String keys = "";
-        for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Map<String, Object> child = (Map<String, Object>) entry.getValue();
+            if (Objects.equals(value, child.get("Customer"))) {
                 keys = entry.getKey().toString();
                 break;
             }

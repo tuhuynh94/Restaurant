@@ -1,11 +1,15 @@
 package com.example.gardo.myapplication;
 
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.text.Editable;
@@ -58,7 +62,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MenuFragment extends Fragment{
+public class MenuFragment extends Fragment implements SearchView.OnQueryTextListener, SearchView.OnCloseListener{
     ListView list_view;
     private List<String>originalData = null;
     private List<String>filteredData = null;
@@ -73,6 +77,9 @@ public class MenuFragment extends Fragment{
     ArrayList<FoodModel> foodList;
     ArrayList<CatagoryFood> catagoryFoods;
     CatagoryFood main,dessert,drink;
+    ProgressDialog mProgress;
+    Context mContext;
+    ExpandableListView expandableListView;
     public MenuFragment() {
         // Required empty public constructor
     }
@@ -88,6 +95,7 @@ public class MenuFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mContext = container.getContext();
         foodList = new ArrayList<>();
 //        foodList.add(new FoodModel("Bianca", R.drawable.bianca, 2.5, 0));
 //        foodList.add(new FoodModel("Bruschetta", R.drawable.bruschetta, 10.5, 0));
@@ -98,10 +106,25 @@ public class MenuFragment extends Fragment{
 //        adapter = new AdapterList(this.getActivity(), foodList);
 //        list_view = (ListView) root.findViewById(R.id.list_food);
 //        list_view.setAdapter(adapter);
-        ExpandableListView expandableListView = (ExpandableListView) root.findViewById(R.id.expand_list);
+        expandableListView = (ExpandableListView) root.findViewById(R.id.expand_list);
+        expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousGroup = -1;
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                // Collapse previous parent if expanded.
+                if ((previousGroup != -1) && (groupPosition != previousGroup)) {
+                    expandableListView.collapseGroup(previousGroup);
+                }
+                previousGroup = groupPosition;
+            }
+        });
         int width = getResources().getDisplayMetrics().widthPixels;
         expandableListView.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
         catagoryFoods = new ArrayList<>();
+        mProgress = new ProgressDialog(getActivity());
+        mProgress.setMessage("Loading food....");
+        mProgress.show();
         foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -128,6 +151,7 @@ public class MenuFragment extends Fragment{
                 catagoryFoods.add(dessert);
                 catagoryFoods.add(drink);
                 adapter.notifyDataSetChanged();
+                mProgress.dismiss();
             }
 
             @Override
@@ -136,22 +160,11 @@ public class MenuFragment extends Fragment{
             }
         });
         adapter = new ExpandListAdapter(this.getActivity(), catagoryFoods);
-        expandableListView.setAdapter(adapter);
         main = new  CatagoryFood("Main");
         dessert = new  CatagoryFood("Dessert");
         drink = new  CatagoryFood("Drink");
-        dbchange();
+        expandableListView.setAdapter(adapter);
         return root;
-    }
-
-    private void dbchange() {
-        StorageReference storage = FirebaseStorage.getInstance().getReference().child("menu").child("bianca.jpg");
-        Log.v("Url", storage.toString());
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -160,19 +173,24 @@ public class MenuFragment extends Fragment{
         if(check == null || !check.equals("staff")) {
             MenuItem mSearchMenuItem = menu.findItem(R.id.action_search);
             SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String s) {
-//                adapter.getFilter().filter(s);
-                    return false;
-                }
-            });
+            SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            searchView.setOnQueryTextListener(this);
+            searchView.setOnCloseListener(this);
         }
+    }
+
+
+    private void expandAll() {
+        int count = adapter.getGroupCount();
+        for (int i = 0; i < count; i++){
+            expandableListView.expandGroup(i);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -180,6 +198,28 @@ public class MenuFragment extends Fragment{
         super.onStart();
 
     }
+
+    @Override
+    public boolean onClose() {
+        adapter.filterData("");
+        expandAll();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        adapter.filterData(query);
+        expandAll();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        adapter.filterData(query);
+        expandAll();
+        return false;
+    }
+
     public class HolderMenu {
         private Button increase, decrease;
         private ToggleButton like, favorite;

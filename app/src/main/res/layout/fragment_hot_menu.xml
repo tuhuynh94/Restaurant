@@ -5,7 +5,7 @@
     tools:context="com.example.gardo.myapplication.HotMenuFragment"
     android:id="@+id/refresh_hot_menu"
     android:layout_marginBottom="30dp"
-    android:background="@drawable/background">
+    android:background="@color/gray">
 
     <!-- TODO: Update blank fragment layout -->
 

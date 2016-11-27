@@ -1,5 +1,6 @@
 package com.example.gardo.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -17,13 +18,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Register extends AppCompatActivity {
     private Button sign_up;
     private EditText email, user_name, password, confirm_password;
-
+    private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +43,7 @@ public class Register extends AppCompatActivity {
         password = (EditText) findViewById(R.id.password_sign_up);
         confirm_password = (EditText) findViewById(R.id.confirm_password);
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -84,11 +93,52 @@ public class Register extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (!task.isSuccessful()) {
                                         Toast.makeText(Register.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                    else{
-                                        Toast.makeText(Register.this, "Successful registration", Toast.LENGTH_SHORT).show();
-                                        Intent i = new Intent(Register.this, LoginActivity.class);
-                                        startActivity(i);
+                                    } else {
+                                        ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+                                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                String displayName = user_name.getText().toString();
+                                                String mail = email.getText().toString();
+                                                if (displayName != null) {
+                                                    ref.child("Display Name").setValue(displayName);
+                                                } else {
+                                                    ref.child("Display Name").setValue("");
+                                                }
+                                                if (mail != null) {
+                                                    ref.child("Email").setValue(mail);
+                                                } else {
+                                                    ref.child("Email").setValue("");
+                                                }
+                                                if (!mAuth.getCurrentUser().isAnonymous()) {
+                                                    ref.child("Role").setValue("User");
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                        final ProgressDialog mProgress = new ProgressDialog(getApplicationContext());
+                                        mProgress.setMessage("Sign with " + email.getText().toString());
+                                        mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                                                .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull final Task<AuthResult> task) {
+                                                        if(task.isSuccessful()) {
+                                                            mDatabase = FirebaseDatabase.getInstance().getReference();
+                                                            ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+                                                            mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+                                                            UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                                                                    .setDisplayName(user_name.getText().toString()).build();
+                                                            mAuth.getCurrentUser().updateProfile(userProfileChangeRequest);
+                                                            Toast.makeText(Register.this, "Signed in with " + user_name.getText().toString(), Toast.LENGTH_SHORT).show();
+                                                            Intent i = new Intent(Register.this, MainActivity.class);
+                                                            startActivity(i);
+                                                        }
+                                                    }
+                                                });
                                     }
                                 }
                             });
@@ -96,9 +146,11 @@ public class Register extends AppCompatActivity {
             }
         });
     }
+
     public final static boolean isValidEmail(CharSequence target) {
-            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
+
     @Override
     public void onStart() {
         super.onStart();

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import java.util.Map;
 
 public class ExpandListAdapter extends BaseExpandableListAdapter {
     private Activity context;
+    private ArrayList<CatagoryFood> foodList;
     private ArrayList<CatagoryFood> food;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
@@ -48,6 +50,14 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
     public ExpandListAdapter(Activity context, ArrayList<CatagoryFood> food) {
         this.context = context;
         this.food = food;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        if(foodList == null && food != null){
+            foodList = (ArrayList<CatagoryFood>) food.clone();
+        }
+        super.notifyDataSetChanged();
     }
 
     @Override
@@ -261,7 +271,36 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
         });
         return rowView;
     }
+    public void filterData(String query){
 
+        query = query.toLowerCase();
+        Log.v("MyListAdapter", String.valueOf(food.size()));
+        food.clear();
+
+        if(query.isEmpty()){
+            food.addAll(foodList);
+        }
+        else {
+
+            for(CatagoryFood food_item: foodList){
+
+                ArrayList<FoodModel> foodModels = food_item.getFood();
+                ArrayList<FoodModel> newList = new ArrayList<FoodModel>();
+                for(FoodModel foodModel: foodModels){
+                    if(foodModel.getName().toLowerCase().contains(query) || foodModel.getCatagory().toLowerCase().contains(query)){
+                        newList.add(foodModel);
+                    }
+                }
+                if(newList.size() > 0){
+                    CatagoryFood nFood = new CatagoryFood(food_item.getName());
+                    nFood.setFood(newList);
+                    food.add(nFood);
+                }
+            }
+        }
+        Log.v("MyListAdapter", String.valueOf(food.size()));
+        notifyDataSetChanged();
+    }
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;

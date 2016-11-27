@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 public class OrderActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
@@ -44,18 +45,18 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table");
         setContentView(R.layout.order_layout);
         list_order = (ListView) findViewById(R.id.list_order);
         total = (TextView) findViewById(R.id.total);
         grand_total = (TextView) findViewById(R.id.grand_total);
         discount = (TextView) findViewById(R.id.discount);
         GridView gridView = (GridView) findViewById(R.id.grid_description);
-        String array1[] = {"Name", "Quantity", "Price"};
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array1);
-        gridView.setAdapter(adapter1);
-        total_d = 0;
-        discount_d = 0;
-        final HashSet<FoodModel> temp = new HashSet<>();
+        final String array1[] = {"Name", "Quantity", "Price"};
+//        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, R.layout.simple_text_view, array1);
+//        gridView.setAdapter(adapter1);
+        gridView.setAdapter(new ArrayAdapter<String>
+                (this, R.layout.simple_text_view, array1));
         list = new ArrayList<String>();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -64,6 +65,9 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
+                final HashSet<FoodModel> temp = new HashSet<>();
+                total_d = 0;
+                discount_d = 0;
                 while (iterator.hasNext()) {
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot) iterator.next()).getValue();
                     String name = (String) map.get("name");
@@ -76,6 +80,23 @@ public class OrderActivity extends AppCompatActivity {
                     temp.add(item);
                 }
                 StringBuilder log = new StringBuilder();
+                if( array != null && array.size() != 0 && array.size() != temp.size()){
+                    ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                            String table = getKeysByValue(map, mAuth.getCurrentUser().getUid());
+                            if (table != null && !table.equals("")) {
+                                ref.child(table).child("Status").setValue("Change Order");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
                 array = new ArrayList<FoodModel>(temp);
                 adapter = new OrderGridModel(OrderActivity.this, array);
                 grand_total_d = discount_d + total_d;
@@ -106,14 +127,15 @@ public class OrderActivity extends AppCompatActivity {
                 myDiaglog.show(getFragmentManager(), "show_diaglod");
             }
         });
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                if(map!= null && map.containsValue(mAuth.getCurrentUser().getUid())){
+                String table = getKeysByValue(map, mAuth.getCurrentUser().getUid());
+                if (table != null && !table.equals("")) {
                     confirm.setText("CHANGE TABLE");
                 }
+                DatabaseReference user = mDatabase.child("user").child(mAuth.getCurrentUser().getUid()).child("order");
             }
 
             @Override
@@ -121,5 +143,17 @@ public class OrderActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public static String getKeysByValue(Map<String, Object> map, String value) {
+        String keys = "";
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Map<String, Object> child = (Map<String, Object>) entry.getValue();
+            if (Objects.equals(value, child.get("Customer"))) {
+                keys = entry.getKey().toString();
+                break;
+            }
+        }
+        return keys;
     }
 }

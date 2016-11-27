@@ -7,6 +7,7 @@ package com.example.gardo.myapplication.Model;
 public class Table {
     private boolean status;
     private String table_name;
+    private String status_Staff;
 
     public Table(String table_name, boolean status) {
         this.table_name = table_name;
@@ -27,5 +28,17 @@ public class Table {
 
     public void setTable_name(String table_name) {
         this.table_name = table_name;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public String getStatus_Staff() {
+        return status_Staff;
+    }
+
+    public void setStatus_Staff(String status_Staff) {
+        this.status_Staff = status_Staff;
     }
 }
