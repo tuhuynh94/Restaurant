@@ -39,6 +39,7 @@ import com.example.gardo.myapplication.Model.CatagoryFood;
 import com.example.gardo.myapplication.Model.ExpandListAdapter;
 import com.example.gardo.myapplication.Model.FoodModel;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -69,6 +70,7 @@ public class MenuFragment extends Fragment implements SearchView.OnQueryTextList
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private DatabaseReference user;
+    private FirebaseAnalytics mAnalytics;
 //    String[] food;
 //    Integer[] imageId;
 //    Double[] price;

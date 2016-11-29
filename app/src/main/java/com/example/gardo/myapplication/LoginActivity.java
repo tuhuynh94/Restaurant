@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
     private boolean check;
+    private String role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +66,29 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(i);
                     }
                     else{
+                        DatabaseReference ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
                         mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
-                        Toast.makeText(getApplicationContext(),"Sign with " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(i);
+                        ref.child("Role").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                role = (String) dataSnapshot.getValue();
+                                    if (role != null && role.equals("User")) {
+                                        Toast.makeText(LoginActivity.this, "Sign in " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(i);
+                                    } else if (role != null && role.equals("Staff")) {
+                                        Toast.makeText(LoginActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
+                                        Intent i = new Intent(LoginActivity.this, StaffActivity.class);
+                                        i.putExtra("staff", "staff");
+                                        startActivity(i);
+                                    }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 }
             }

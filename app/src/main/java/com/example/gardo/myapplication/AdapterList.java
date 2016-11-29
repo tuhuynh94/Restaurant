@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.example.gardo.myapplication.Model.FoodModel;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.api.model.StringList;
@@ -200,6 +201,8 @@ public class AdapterList extends ArrayAdapter<FoodModel> {
                     if(food.get(position).getQuantity() > 0) {
                         userOrder.child(food.get(position).getName()).setValue(item);
                         holder.add.setText("REMOVE");
+                        FirebaseAnalytics mAnalytics = FirebaseAnalytics.getInstance(getContext());
+                        mAnalytics.setUserProperty("food", food.get(position).getName());
                     }
                 }
                 else{

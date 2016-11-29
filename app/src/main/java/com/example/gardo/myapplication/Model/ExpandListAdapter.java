@@ -234,6 +234,9 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
         });
         holder.add = (Button) rowView.findViewById(R.id.btn_add);
         final DatabaseReference userOrder = mDatabase.child("user").child(userFire.getUid()).child("order");
+        if(child.getQuantity() > 0){
+            holder.add.setText("REMOVE");
+        }
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
