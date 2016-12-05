@@ -59,37 +59,37 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    if(mAuth.getCurrentUser().isAnonymous()){
-                        Toast.makeText(getApplicationContext(),"Sign with Anynomous", Toast.LENGTH_SHORT).show();
-                        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
-                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(i);
-                    }
-                    else{
-                        DatabaseReference ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
-                        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
-                        ref.child("Role").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                role = (String) dataSnapshot.getValue();
-                                    if (role != null && role.equals("User")) {
-                                        Toast.makeText(LoginActivity.this, "Sign in " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
-                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(i);
-                                    } else if (role != null && role.equals("Staff")) {
-                                        Toast.makeText(LoginActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
-                                        Intent i = new Intent(LoginActivity.this, StaffActivity.class);
-                                        i.putExtra("staff", "staff");
-                                        startActivity(i);
-                                    }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
+//                    if(mAuth.getCurrentUser().isAnonymous()){
+//                        Toast.makeText(getApplicationContext(),"Sign with Anynomous", Toast.LENGTH_SHORT).show();
+//                        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+//                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+//                        startActivity(i);
+//                    }
+//                    else{
+//                        DatabaseReference ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+//                        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+//                        ref.child("Role").addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(DataSnapshot dataSnapshot) {
+//                                role = (String) dataSnapshot.getValue();
+//                                    if (role != null && role.equals("User")) {
+//                                        Toast.makeText(LoginActivity.this, "Sign in " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+//                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+//                                        startActivity(i);
+//                                    } else if (role != null && role.equals("Staff")) {
+//                                        Toast.makeText(LoginActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
+//                                        Intent i = new Intent(LoginActivity.this, StaffActivity.class);
+//                                        i.putExtra("staff", "staff");
+//                                        startActivity(i);
+//                                    }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(DatabaseError databaseError) {
+//
+//                            }
+//                        });
+//                    }
                 }
             }
         };
@@ -111,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
     public void sign_anonymous(View view) {
         final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
         view.startAnimation(buttonClick);
+        mAuth.signOut();
         final ProgressDialog mProgress = new ProgressDialog(this);
         mProgress.setMessage("Sign with Anonymous");
         mProgress.show();

@@ -27,6 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 public class LoginMainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
@@ -45,6 +47,7 @@ public class LoginMainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.hide();
+        final ProgressDialog mProgress = new ProgressDialog(this);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -83,8 +86,8 @@ public class LoginMainActivity extends AppCompatActivity {
                             i.putExtra("admin", "admin");
                             startActivity(i);
                         } else {
-                            final ProgressDialog mProgress = new ProgressDialog(getApplicationContext());
                             mProgress.setMessage("Sign with " + email.getText().toString());
+                            mProgress.show();
                             mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                                     .addOnCompleteListener(LoginMainActivity.this, new OnCompleteListener<AuthResult>() {
                                         @Override

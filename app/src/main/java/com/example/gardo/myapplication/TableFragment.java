@@ -44,7 +44,7 @@ public class TableFragment extends Fragment {
         return root;
     }
     private void loadTable() {
-        FirebaseDatabase.getInstance().getReference().child("Table").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("Table").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
@@ -53,7 +53,7 @@ public class TableFragment extends Fragment {
                     Map<String, Object> map = (Map<String, Object>) tab.getValue();
                     String customer = (String) map.get("Customer");
                     String status = (String ) map.get("Status");
-                    if (customer.equals("")) {
+                   if (customer.equals("")) {
                         Table table = new Table(tab.getKey(), false);
                         table.setStatus_Staff(status);
                         tables.add(table);
