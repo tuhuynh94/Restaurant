@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_edit_admin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.gardo.myapplication.EditActivityAdmin">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/noimg"
+        android:id="@+id/img_edit"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/name_food_edit"
+        android:id="@+id/price_food_edit"
+        android:background="@drawable/border"/>
+
+    <Button
+        android:text="SAVE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/price_food_edit"
+        android:layout_marginBottom="61dp"
+        android:id="@+id/save_edit" />
+
+    <Button
+        android:text="CANCEL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/save_edit"
+        android:layout_toEndOf="@+id/save_edit"
+        android:layout_marginStart="48dp"
+        android:id="@+id/cancel_edit" />
+
+    <TextView
+        android:text="Name Food"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_name"
+        android:layout_alignBaseline="@+id/name_food_edit"
+        android:layout_alignBottom="@+id/name_food_edit"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Price Food"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_price"
+        android:layout_alignBaseline="@+id/price_food_edit"
+        android:layout_alignBottom="@+id/price_food_edit"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/name_food_edit"
+        android:layout_marginTop="44dp"
+        android:background="@drawable/border"
+        android:layout_below="@+id/img_edit"
+        android:layout_toEndOf="@+id/title_name"
+        android:layout_marginStart="11dp" />
+
+</RelativeLayout>

@@ -3,6 +3,7 @@
     package="com.example.gardo.myapplication">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="false"
@@ -36,7 +37,8 @@
         <activity android:name=".OrderActivity" />
         <activity android:name=".CheckoutActivity" />
         <activity android:name=".AdminActivity" />
-        <activity android:name=".StaffActivity"
+        <activity
+            android:name=".StaffActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:uiOptions="splitActionBarWhenNarrow">
@@ -48,6 +50,8 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+        <activity android:name=".EditActivityAdmin" />
+        <activity android:name=".AddActivity"></activity>
     </application>
 
 </manifest>
