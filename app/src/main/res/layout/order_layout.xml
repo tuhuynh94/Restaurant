@@ -16,8 +16,7 @@
     <ListView
     android:id="@+id/list_order"
     android:layout_width="match_parent"
-    android:layout_height="323dp"
-        android:layout_weight="0.26" />
+    android:layout_height="269dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -149,5 +148,29 @@
             android:background="@drawable/sign1"
             android:layout_marginTop="10dp"/>
     </RelativeLayout>
+
+    <Button
+        android:text="ADD COUPON"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_coupon"
+        android:padding="2dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/button"
+        android:visibility="invisible"/>
+
+    <Button
+        android:text="VIEW ORDER HISTORY"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/order_history"
+        android:padding="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/button"/>
 
 </LinearLayout>

@@ -51,7 +51,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".EditActivityAdmin" />
-        <activity android:name=".AddActivity"></activity>
+        <activity android:name=".AddActivity" />
+        <activity android:name=".OrderHistory"></activity>
     </application>
 
 </manifest>

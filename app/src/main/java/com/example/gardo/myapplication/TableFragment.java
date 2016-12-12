@@ -1,8 +1,10 @@
 package com.example.gardo.myapplication;
 
 
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +28,10 @@ import java.util.Map;
 public class TableFragment extends Fragment {
     CustomListViewStaffTableModel adapter;
     ArrayList<Table> tables;
+    String check = "Empty";
+    NotificationCompat.Builder mBuilder;
+    NotificationManager mNotificationManager;
+    private static final int MY_NOTIFICATION_ID = 12345;
 
     public TableFragment() {
         // Required empty public constructor
@@ -39,6 +45,9 @@ public class TableFragment extends Fragment {
         tables = new ArrayList<>();
         ListView list = (ListView) root.findViewById(R.id.list_table_staff);
         adapter = new CustomListViewStaffTableModel(getActivity(), tables);
+        mBuilder = new NotificationCompat.Builder(getActivity());
+        mNotificationManager =
+                (NotificationManager) getActivity().getSystemService(getContext().NOTIFICATION_SERVICE);
         loadTable();
         list.setAdapter(adapter);
         return root;
@@ -47,6 +56,7 @@ public class TableFragment extends Fragment {
         FirebaseDatabase.getInstance().getReference().child("Table").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                tables.clear();
                 Iterator iterator = dataSnapshot.getChildren().iterator();
                 while (iterator.hasNext()) {
                     DataSnapshot tab = (DataSnapshot) iterator.next();
@@ -60,6 +70,13 @@ public class TableFragment extends Fragment {
                     } else {
                         Table table = new Table(tab.getKey(), true);
                         table.setStatus_Staff(status);
+                        table.setCustomer_name(customer);
+                       if(!status.equals(check)){
+                           mBuilder.setSmallIcon(R.drawable.icon)
+                                   .setContentTitle(table.getTable_name())
+                                   .setContentText(status);
+                           mNotificationManager.notify(MY_NOTIFICATION_ID, mBuilder.build());
+                       }
                         tables.add(table);
                     }
                 }

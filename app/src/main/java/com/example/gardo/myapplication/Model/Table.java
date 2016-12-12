@@ -8,10 +8,19 @@ public class Table {
     private boolean status;
     private String table_name;
     private String status_Staff;
+    private String customer_name;
 
     public Table(String table_name, boolean status) {
         this.table_name = table_name;
         this.status = status;
+    }
+
+    public String getCustomer_name() {
+        return customer_name;
+    }
+
+    public void setCustomer_name(String customer_name) {
+        this.customer_name = customer_name;
     }
 
     public boolean getStatus() {

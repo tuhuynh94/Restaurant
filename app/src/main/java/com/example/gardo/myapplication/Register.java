@@ -120,6 +120,8 @@ public class Register extends AppCompatActivity {
                                                 if (!mAuth.getCurrentUser().isAnonymous()) {
                                                     ref.child("Role").setValue("User");
                                                 }
+                                                ref.child("Total Spend").setValue(0D);
+                                                ref.child("Reward Points").setValue(0D);
                                             }
 
                                             @Override
@@ -128,24 +130,26 @@ public class Register extends AppCompatActivity {
                                             }
                                         });
                                         final ProgressDialog mProgress = new ProgressDialog(getApplicationContext());
-                                        mProgress.setMessage("Sign with " + email.getText().toString());
-                                        mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                                                .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull final Task<AuthResult> task) {
-                                                        if(task.isSuccessful()) {
-                                                            mDatabase = FirebaseDatabase.getInstance().getReference();
-                                                            ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
-                                                            mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
-                                                            UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
-                                                                    .setDisplayName(user_name.getText().toString()).build();
-                                                            mAuth.getCurrentUser().updateProfile(userProfileChangeRequest);
-                                                            Toast.makeText(Register.this, "Signed in with " + user_name.getText().toString(), Toast.LENGTH_SHORT).show();
-                                                            Intent i = new Intent(Register.this, MainActivity.class);
-                                                            startActivity(i);
-                                                        }
-                                                    }
-                                                });
+//                                        mProgress.setMessage("Sign with " + email.getText().toString());
+//                                        mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+//                                                .addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
+//                                                    @Override
+//                                                    public void onComplete(@NonNull final Task<AuthResult> task) {
+//                                                        if(task.isSuccessful()) {
+//                                                            mDatabase = FirebaseDatabase.getInstance().getReference();
+//                                                            ref = mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Information");
+//                                                            mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+//                                                            UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+//                                                                    .setDisplayName(user_name.getText().toString()).build();
+//                                                            mAuth.getCurrentUser().updateProfile(userProfileChangeRequest);
+//                                                            Toast.makeText(Register.this, "Signed in with " + user_name.getText().toString(), Toast.LENGTH_SHORT).show();
+//                                                            Intent i = new Intent(Register.this, MainActivity.class);
+//                                                            startActivity(i);
+//                                                        }
+//                                                    }
+//                                                });
+                                        Intent i = new Intent(getApplicationContext(), LoginMainActivity.class);
+                                        startActivity(i);
                                     }
                                 }
                             });

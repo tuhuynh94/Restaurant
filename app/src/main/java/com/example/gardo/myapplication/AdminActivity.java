@@ -36,7 +36,6 @@ public class AdminActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new FoodAdminFragment(), "FOOD");
-        viewPagerAdapter.addFragment(new UserAdminFragment(), "USER");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }

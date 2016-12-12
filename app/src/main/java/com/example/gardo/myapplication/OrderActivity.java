@@ -126,6 +126,7 @@ public class OrderActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DiaglogModel myDiaglog = new DiaglogModel();
                 myDiaglog.show(getFragmentManager(), "show_diaglod");
+
             }
         });
         ref.addValueEventListener(new ValueEventListener() {
@@ -142,6 +143,14 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+        Button view_history = (Button) findViewById(R.id.order_history);
+        view_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), OrderHistory.class);
+                startActivity(i);
             }
         });
     }

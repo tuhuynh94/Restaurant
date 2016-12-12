@@ -153,6 +153,7 @@ public class MenuFragment extends Fragment implements SearchView.OnQueryTextList
                 catagoryFoods.add(dessert);
                 catagoryFoods.add(drink);
                 adapter.notifyDataSetChanged();
+                expandableListView.expandGroup(0);
                 mProgress.dismiss();
             }
 

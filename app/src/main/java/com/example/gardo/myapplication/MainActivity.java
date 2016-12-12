@@ -34,14 +34,20 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -66,11 +72,11 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         String email = null;
-        if(user != null) {
+        if (user != null) {
             email = user.getEmail();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -78,20 +84,23 @@ public class MainActivity extends AppCompatActivity
         actionBar.setDisplayShowTitleEnabled(false);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View header = navigationView.getHeaderView(0);
-        if(getIntent().getExtras() != null && getIntent().getExtras().get("admin").equals("admin")){
+        if (getIntent().getExtras() != null && getIntent().getExtras().get("admin").equals("admin")) {
             navigationView.getMenu().findItem(R.id.admin_title).setVisible(true);
         }
         account_circle = (ImageView) header.findViewById(R.id.account_circle);
         TextView name_info = (TextView) header.findViewById(R.id.name_info);
         TextView email_info = (TextView) header.findViewById(R.id.email_info);
-        if(email == null){
+        final TextView total_spend = (TextView) header.findViewById(R.id.total_spend);
+        final TextView reward_points = (TextView) header.findViewById(R.id.reward_points);
+        if (email == null) {
             account_circle.setImageResource(R.drawable.avtar_anonymous);
             account_circle.setMaxHeight(10);
             account_circle.setMaxWidth(10);
+            total_spend.setVisibility(View.INVISIBLE);
+            reward_points.setVisibility(View.INVISIBLE);
             name_info.setText("anonymous");
             email_info.setText("");
-        }
-        else{
+        } else {
 //            FirebaseStorage storage = FirebaseStorage.getInstance();
 //            StorageReference storageRef = storage.getReferenceFromUrl("gs://restaurant-d8ad0.appspot.com/");
 //            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -102,6 +111,22 @@ public class MainActivity extends AppCompatActivity
 //            name_info.setText(user.getDisplayName().toString());
 //            String uri = user.getPhotoUrl().toString();
 //            Glide.with(this).using(new FirebaseImageLoader()).load(storageRef.child("panda.png")).into(account_circle);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Information");
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    String spend = String.valueOf(map.get("Total Spend"));
+                    String reward = String.valueOf(map.get("Reward Points"));
+                    total_spend.setText("Total Spend: $" + spend);
+                    reward_points.setText("Total Reward: " + reward);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
             email_info.setText(user.getEmail());
         }
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -127,7 +152,9 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
     SearchView searchView;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -151,11 +178,28 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_about) {
             return true;
         }
-        if(id == R.id.action_order){
+        if (id == R.id.action_order) {
             Intent i = new Intent(this, OrderActivity.class);
             startActivity(i);
         }
+        if (id == R.id.action_waiter) {
+            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table");
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    String table = getKeysByValue(map, mAuth.getCurrentUser().getUid());
+                    if (table != null && !table.equals("")) {
+                        ref.child(table).child("Status").setValue("Call Waiter");
+                    }
+                }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -171,13 +215,11 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.action_about) {
 
-        }
-        else if (id == R.id.sign_out){
+        } else if (id == R.id.sign_out) {
             mAuth.getInstance().signOut();
             Intent i = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(i);
-        }
-        else if (id == R.id.update_menu){
+        } else if (id == R.id.update_menu) {
 
         }
 
@@ -192,5 +234,15 @@ public class MainActivity extends AppCompatActivity
         mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
         super.onDestroy();
     }
-    
+    public static String getKeysByValue(Map<String, Object> map, String value) {
+        String keys = "";
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Map<String, Object> child = (Map<String, Object>) entry.getValue();
+            if (Objects.equals(value, child.get("Customer"))) {
+                keys = entry.getKey().toString();
+                break;
+            }
+        }
+        return keys;
+    }
 }
