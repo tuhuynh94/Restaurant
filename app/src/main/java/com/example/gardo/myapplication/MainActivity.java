@@ -111,15 +111,27 @@ public class MainActivity extends AppCompatActivity
 //            name_info.setText(user.getDisplayName().toString());
 //            String uri = user.getPhotoUrl().toString();
 //            Glide.with(this).using(new FirebaseImageLoader()).load(storageRef.child("panda.png")).into(account_circle);
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Information");
+            final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("user").child(mAuth.getCurrentUser().getUid()).child("Information");
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    String spend = String.valueOf(map.get("Total Spend"));
-                    String reward = String.valueOf(map.get("Reward Points"));
-                    total_spend.setText("Total Spend: $" + spend);
-                    reward_points.setText("Total Reward: " + reward);
+                    if(map != null && map.get("Total Spend") != null && map.get("Reward Points") != null) {
+                        String spend = String.valueOf(map.get("Total Spend"));
+                        String reward = String.valueOf(map.get("Reward Points"));
+                        total_spend.setText("Total Spend: $" + spend);
+                        reward_points.setText("Total Reward: " + reward);
+                    }
+                    else if(map == null){
+                        ref.child("Email").setValue(mAuth.getCurrentUser().getEmail());
+                        ref.child("Role").setValue("User");
+                        ref.child("Total Spend").setValue(0);
+                        ref.child("Reward Points").setValue(0);
+                    }
+                    else{
+                        total_spend.setText("Total Spend: $0");
+                        reward_points.setText("Total Reward:0");
+                    }
                 }
 
                 @Override
@@ -231,7 +243,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
+//        mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
         super.onDestroy();
     }
     public static String getKeysByValue(Map<String, Object> map, String value) {

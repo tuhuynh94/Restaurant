@@ -19,7 +19,9 @@ android {
     }
     sourceSets { main { res.srcDirs = ['src/main/res', 'src/main/res/food'] } }
 }
-
+repositories {
+    mavenCentral() // jcenter() works as well because it pulls from Maven Central
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -32,14 +34,13 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:9.8.0'
     compile 'com.google.firebase:firebase-auth:9.8.0'
     compile 'com.google.firebase:firebase-database:9.8.0'
+    compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.firebaseui:firebase-ui-storage:0.6.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.github.eluleci:flatui:3.0.0'
     compile 'pl.rspective.voucherify.android.client:voucherify-android-sdk:0.6.0'
     testCompile 'junit:junit:4.12'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
 apply plugin: 'com.google.gms.google-services'
-repositories {
-    mavenCentral() // jcenter() works as well because it pulls from Maven Central
-}

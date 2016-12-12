@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_login"
@@ -12,13 +13,58 @@
     tools:context="com.example.gardo.myapplication.LoginActivity"
     android:background="@drawable/background">
 
-    <TableLayout
+    <TextView
+        android:text="Create Account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="150dp"
-        android:id="@+id/tableLayout">
+        android:layout_marginBottom="22dp"
+        android:id="@+id/register_account"
+        android:textColor="@android:color/holo_blue_dark"
+        android:clickable="true"
+        android:textSize="15dp"
+        android:onClick="register"/>
+
+    <TextView
+        android:text="Forgot your password ?"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/holo_blue_dark"
+        android:clickable="true"
+        android:textSize="15dp"
+        android:id="@+id/forgot_password" />
+
+    <Button
+        android:id="@+id/sign_in"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="SIGN IN"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:background="@drawable/sign1"
+        android:layout_marginBottom="17dp"
+        android:layout_above="@+id/register_account"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/logo2"
+        android:id="@+id/imageView3"
+        android:layout_above="@+id/tableLayout"
+        android:layout_alignStart="@+id/sign_in" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tableLayout"
+        android:layout_above="@+id/google_sign"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="13dp">
+
 
         <TableRow
             android:layout_width="match_parent"
@@ -58,37 +104,27 @@
         </TableRow>
     </TableLayout>
 
-    <TextView
-        android:text="Create Account"
+    <Button
+        android:text=""
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="-5dp"
+        android:layout_marginRight="-5dp"
+        android:id="@+id/google_sign"
+        android:background="@drawable/icon_google"
+        android:layout_marginBottom="42dp"
+        android:layout_above="@+id/sign_in"
+        android:layout_alignStart="@+id/facebook_sign"
+        android:layout_alignEnd="@+id/facebook_sign" />
+
+    <com.facebook.login.widget.LoginButton
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="22dp"
-        android:id="@+id/register_account"
-        android:textColor="@android:color/holo_blue_dark"
-        android:clickable="true"
-        android:textSize="15dp"
-        android:onClick="register"/>
-
-    <Button
-        android:id="@+id/sign_in"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="SIGN IN"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:background="@drawable/sign1"
-        android:layout_marginBottom="30dp"
-        android:layout_above="@+id/register_account"
-        android:layout_centerHorizontal="true" />
-
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:srcCompat="@drawable/logo2"
-        android:id="@+id/imageView"
-        android:layout_above="@+id/tableLayout"
-        android:layout_alignStart="@+id/sign_in" />
+        android:id="@+id/facebook_sign"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/sign_in"
+        android:layout_alignStart="@+id/forgot_password"
+        android:layout_alignEnd="@+id/sign_in" />
 
 </RelativeLayout>

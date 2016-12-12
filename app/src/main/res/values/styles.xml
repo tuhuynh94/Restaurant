@@ -18,5 +18,11 @@
     <style name="edit_text" parent="Widget.AppCompat.EditText">
         <item name="android:textColorHint">@android:color/white</item>
     </style>
+    <style name="FacebookLoginButton">
+        <item name="android:background">@drawable/ic_1481557411_facebook</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
 
 </resources>
