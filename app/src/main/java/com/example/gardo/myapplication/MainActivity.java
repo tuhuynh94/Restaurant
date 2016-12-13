@@ -3,6 +3,7 @@ package com.example.gardo.myapplication;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v4.app.AppLaunchChecker;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -149,8 +151,10 @@ public class MainActivity extends AppCompatActivity
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new MenuFragment(), "MENU");
         viewPagerAdapter.addFragment(new HotMenuFragment(), "HOT");
-        viewPagerAdapter.addFragment(new FavoriteFragment(), "FAVORITE");
-        viewPagerAdapter.addFragment(new CouponFragment(), "COUPON");
+        if(!mAuth.getCurrentUser().isAnonymous()) {
+            viewPagerAdapter.addFragment(new FavoriteFragment(), "FAVORITE");
+            viewPagerAdapter.addFragment(new CouponFragment(), "COUPON");
+        }
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -231,8 +235,13 @@ public class MainActivity extends AppCompatActivity
             mAuth.getInstance().signOut();
             Intent i = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(i);
-        } else if (id == R.id.update_menu) {
+        } else if (id == R.id.profile) {
+            new AlertDialog.Builder(MainActivity.this).setTitle("This activity will update soon").setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
+                }
+            }).create().show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

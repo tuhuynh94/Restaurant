@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.gardo.myapplication.Model.DiaglogModel;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookActivity;
@@ -66,14 +67,16 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager mCallbackManager;
+    ProgressDialog mProgress_google;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseAuth.getInstance().signOut();
         FacebookSdk.sdkInitialize(LoginMainActivity.this.getApplicationContext());
         setContentView(R.layout.activity_login);
+        FirebaseAuth.getInstance().signOut();
         facebookSign();
+        mProgress_google = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
@@ -135,9 +138,11 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
                                                         Toast.makeText(LoginMainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                                     } else {
                                                         if (role != null && role.equals("User")) {
-                                                            Toast.makeText(LoginMainActivity.this, "Signed in", Toast.LENGTH_SHORT).show();
-                                                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
-                                                            startActivity(i);
+                                                            Toast.makeText(LoginMainActivity.this, "Signed in " + email.getText().toString(), Toast.LENGTH_SHORT).show();
+                                                            DiaglogModel myDiaglog = new DiaglogModel();
+                                                            myDiaglog.show(getFragmentManager(), "show_diaglod");
+//                                                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+//                                                            startActivity(i);
                                                         } else if (role != null && role.equals("Staff")) {
                                                             Toast.makeText(LoginMainActivity.this, "Signed in Staff", Toast.LENGTH_SHORT).show();
                                                             Intent i = new Intent(LoginMainActivity.this, StaffActivity.class);
@@ -155,6 +160,7 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
                                             });
                                         } else {
                                             Toast.makeText(getApplicationContext(), task.getException().getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                            mProgress.dismiss();
                                         }
                                     }
                                 });
@@ -176,32 +182,47 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
                 input.setLayoutParams(lp);
                 input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 alertDialog.setView(input);
-
-                alertDialog.setPositiveButton("YES",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.setPositiveButton("OK", null);
+                alertDialog.setNegativeButton("Cancel", null);
+                AlertDialog dialog = alertDialog.create();
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(final DialogInterface dialog) {
+                        Button possitive = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                        Button negative = ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                        possitive.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
                                 String email_forgot = input.getText().toString();
-                                FirebaseAuth auth = FirebaseAuth.getInstance();
+                                if(isValidEmail(email_forgot)) {
+                                    FirebaseAuth auth = FirebaseAuth.getInstance();
 
-                                auth.sendPasswordResetEmail(email_forgot)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(getApplicationContext(), "Email forgot password sent", Toast.LENGTH_SHORT).show();
+                                    auth.sendPasswordResetEmail(email_forgot)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Toast.makeText(getApplicationContext(), "Email forgot password sent", Toast.LENGTH_SHORT).show();
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                    dialog.dismiss();
+                                }
+                                else{
+                                    input.setError("This not Email Address");
+                                    Toast.makeText(getApplicationContext(), "Email Address in invalid format", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
-
-                alertDialog.setNegativeButton("NO",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
+                        negative.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
                             }
                         });
-                alertDialog.show();
+                    }
+                });
+                dialog.show();
             }
         });
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -254,8 +275,10 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
                                     Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
-                            startActivity(i);
+//                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+//                            startActivity(i);
+                            DiaglogModel myDiaglog = new DiaglogModel();
+                            myDiaglog.show(getFragmentManager(), "show_diaglod");
                         }
                     }
                 });
@@ -266,6 +289,8 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
         google_sign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mProgress_google.setMessage("Sign in with gmail");
+                mProgress_google.show();
                 Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
@@ -302,8 +327,11 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
                             Toast.makeText(LoginMainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
-                            startActivity(i);
+//                            Intent i = new Intent(LoginMainActivity.this, MainActivity.class);
+//                            startActivity(i);
+                            mProgress_google.dismiss();
+                            DiaglogModel myDiaglog = new DiaglogModel();
+                            myDiaglog.show(getFragmentManager(), "show_diaglod");
                         }
                     }
                 });
@@ -326,5 +354,12 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+    public final static boolean isValidEmail(CharSequence target) {
+        if (target == null) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.gardo.myapplication;
 
+import android.content.DialogInterface;
 import android.provider.ContactsContract;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -57,6 +59,17 @@ public class OrderHistory extends AppCompatActivity implements Comparator<String
         adapter = new ListViewOrderHistory(this, array);
         list = (ListView) findViewById(R.id.list_order_history);
         list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                new AlertDialog.Builder(OrderHistory.this).setTitle("This activity will update soon").setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).create().show();
+            }
+        });
     }
 
     @Override

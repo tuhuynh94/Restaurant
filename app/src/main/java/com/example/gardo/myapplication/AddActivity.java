@@ -43,6 +43,10 @@ public class AddActivity extends AppCompatActivity {
         Spinner spin = (Spinner) findViewById(R.id.spinner);
         mProgressDialog = new ProgressDialog(this);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_dropdown_item,array);
+        ImageView image = (ImageView) findViewById(R.id.image_view);
+        image.setImageResource(R.drawable.logo2);
+        image.setMaxHeight(200);
+        image.setMaxWidth(200);
         spin.setAdapter(adapter);
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -81,6 +85,17 @@ public class AddActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean check = true;
+                String name = name_add.getText().toString();
+                Double price = Double.valueOf(price_add.getText().toString());
+                if(!name.matches("[A-za-z0-9/s]+")){
+                    name_add.setError("This field only accept character and number");
+                    check = false;
+                }
+                if(price < 0){
+                    price_add.setError("This not allow negative number");
+                    check = false;
+                }
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -95,10 +110,12 @@ public class AddActivity extends AppCompatActivity {
                     }
                 });
                 try {
-                    thread.start();
-                    thread.sleep(1000);
-                    Intent i = new Intent(getApplicationContext(), AdminActivity.class);
-                    startActivity(i);
+                    if(check) {
+                        thread.start();
+                        thread.sleep(1000);
+                        Intent i = new Intent(getApplicationContext(), AdminActivity.class);
+                        startActivity(i);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

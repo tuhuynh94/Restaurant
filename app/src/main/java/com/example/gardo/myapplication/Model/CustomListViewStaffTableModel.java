@@ -113,6 +113,17 @@ public class CustomListViewStaffTableModel extends ArrayAdapter<Table> {
                 }).create().show();
             }
         });
+        Button listen = (Button) rowView.findViewById(R.id.listen_customer);
+        listen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final DatabaseReference userOrder = FirebaseDatabase.getInstance().getReference().child("user").child(table_item.getCustomer_name());
+                final DatabaseReference OrderRef = FirebaseDatabase.getInstance().getReference().child("Order");
+                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table").child(table_item.getTable_name());
+                ref.child("Status").setValue("USING");
+                userOrder.child("order").child("listened").setValue(true);
+            }
+        });
         return rowView;
     }
 

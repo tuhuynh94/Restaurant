@@ -38,6 +38,17 @@ public class EditActivityAdmin extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean check = true;
+                String name_check = name.getText().toString();
+                Double price_check = Double.valueOf(price.getText().toString());
+                if(!name_check.matches("[A-za-z0-9/s]+")){
+                    name.setError("This field only accept character and number");
+                    check = false;
+                }
+                if(price_check < 0){
+                    price.setError("This not allow negative number");
+                    check = false;
+                }
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -52,10 +63,12 @@ public class EditActivityAdmin extends AppCompatActivity {
                     }
                 });
                 try {
-                    thread.start();
-                    thread.sleep(1000);
-                    Intent i = new Intent(getApplicationContext(), AdminActivity.class);
-                    startActivity(i);
+                    if(check) {
+                        thread.start();
+                        thread.sleep(1000);
+                        Intent i = new Intent(getApplicationContext(), AdminActivity.class);
+                        startActivity(i);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

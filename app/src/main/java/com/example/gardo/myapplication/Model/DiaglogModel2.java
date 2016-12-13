@@ -4,22 +4,16 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.gardo.myapplication.LoginActivity;
 import com.example.gardo.myapplication.MainActivity;
-import com.example.gardo.myapplication.OrderActivity;
 import com.example.gardo.myapplication.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -29,17 +23,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Created by gardo on 16/11/2016.
  */
 
-public class DiaglogModel extends DialogFragment {
+public class DiaglogModel2 extends DialogFragment {
     LayoutInflater inflater;
     View v;
     ListView list;
@@ -92,9 +84,6 @@ public class DiaglogModel extends DialogFragment {
                         if (!hasTable) {
                             FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).child("Customer").setValue(mAuth.getCurrentUser().getUid());
                             FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).child("Status").setValue("Choosen table");
-                            FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).child("check").removeValue();
-                            Intent i = new Intent(getActivity(), MainActivity.class);
-                            startActivity(i);
 //                            Button confirm = (Button) getActivity().findViewById(R.id.confirm_order);
 //                            confirm.setText("CHANGE TABLE");
                         } else {
@@ -102,13 +91,10 @@ public class DiaglogModel extends DialogFragment {
                             FirebaseDatabase.getInstance().getReference().child("Table").child(table.getTable_name()).child("Status").setValue("Changed Table");
                             FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).child("Customer").setValue("");
                             FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).child("Status").setValue("Empty");
-                            FirebaseDatabase.getInstance().getReference().child("Table").child(table_check).child("check").removeValue();
-                            Intent i = new Intent(getActivity(), MainActivity.class);
-                            startActivity(i);
                         }
                     } else if(table != null && table.getStatus()){
                         Toast.makeText(v.getContext(), "This table is using", Toast.LENGTH_SHORT).show();
-                        DiaglogModel myDiaglog = new DiaglogModel();
+                        DiaglogModel2 myDiaglog = new DiaglogModel2();
                         myDiaglog.show(getFragmentManager(), "show_diaglod");
                     }
                 }
@@ -116,9 +102,7 @@ public class DiaglogModel extends DialogFragment {
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(v.getContext(), "Please choose table before order", Toast.LENGTH_SHORT).show();
                 dialog.cancel();
-                FirebaseAuth.getInstance().signOut();
             }
         });
         return builder.create();

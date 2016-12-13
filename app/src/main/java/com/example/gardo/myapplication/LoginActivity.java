@@ -41,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
         actionBar.hide();
         mAuth = FirebaseAuth.getInstance();
         Button pre_sign = (Button) findViewById(R.id.type_sign_in);
-        mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 //        final FirebaseUser userFire = mAuth.getCurrentUser();
 //        final DatabaseReference like = mDatabase.child("user").child(userFire.getUid()).child("like");

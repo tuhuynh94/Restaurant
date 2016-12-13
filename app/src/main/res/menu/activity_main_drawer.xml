@@ -4,17 +4,20 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/action_assessment"
-            android:title="Staff Assessment">
+            android:title="Staff Assessment"
+            android:visible="false">
 
         </item>
         <item
             android:id="@+id/action_feedback"
-            android:title="Feedback">
+            android:title="Feedback"
+            android:visible="false">
 
         </item>
         <item
             android:id="@+id/action_about"
-            android:title="About">
+            android:title="About"
+            android:visible="false">
         </item>
     </group>
     <group>

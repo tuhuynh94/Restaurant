@@ -131,6 +131,10 @@ public class MenuFragment extends Fragment implements SearchView.OnQueryTextList
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
+                catagoryFoods.clear();
+                main.food.clear();
+                dessert.food.clear();
+                drink.food.clear();
                 while (iterator.hasNext()){
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot)iterator.next()).getValue();
                     String name = (String) map.get("name");

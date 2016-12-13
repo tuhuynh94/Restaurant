@@ -68,7 +68,7 @@ public class TableModel extends ArrayAdapter<Table> {
                     id = (String) dataSnapshot.getValue();
                     if (id != null && id.equals(mAuth.getCurrentUser().getUid())) {
                         holder.status.setText("Using");
-                        holder.status.setTextColor(Color.YELLOW);
+                        holder.status.setTextColor(Color.BLUE);
                     } else {
                         holder.status.setText("Not Available");
                         holder.status.setTextColor(Color.RED);

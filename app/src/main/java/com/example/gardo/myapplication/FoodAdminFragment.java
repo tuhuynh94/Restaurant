@@ -64,10 +64,14 @@ public class FoodAdminFragment extends Fragment {
         int width = getResources().getDisplayMetrics().widthPixels;
         expandableListView.setIndicatorBounds(width-GetDipsFromPixel(35), width-GetDipsFromPixel(5));
         catagoryFoods = new ArrayList<>();
-        foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        foodRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
+                catagoryFoods.clear();
+                main.food.clear();
+                dessert.food.clear();
+                drink.food.clear();
                 while (iterator.hasNext()){
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot)iterator.next()).getValue();
                     String name = (String) map.get("name");

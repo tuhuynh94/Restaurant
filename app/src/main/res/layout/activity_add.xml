@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@android:color/white"
     tools:context="com.example.gardo.myapplication.AddActivity">
 
     <ImageView
@@ -32,13 +33,13 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="35dp"
-        android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/name_add"
         android:background="@drawable/border"
         android:layout_below="@+id/image_view"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp" />
+        android:layout_marginTop="27dp"
+        android:inputType="textCapWords" />
 
     <Spinner
         android:layout_width="200dp"
@@ -48,17 +49,6 @@
         android:layout_above="@+id/set_img"
         android:layout_alignStart="@+id/name_add"
         android:layout_alignEnd="@+id/name_add" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_above="@+id/spinner"
-        android:layout_alignEnd="@+id/spinner"
-        android:layout_marginBottom="17dp"
-        android:id="@+id/price_add"
-        android:background="@drawable/border"/>
 
     <TextView
         android:text="Name"
@@ -76,14 +66,6 @@
         android:layout_alignParentStart="true"
         android:id="@+id/title_price" />
 
-    <TextView
-        android:text="Catagory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/set_img"
-        android:layout_alignParentStart="true"
-        android:id="@+id/title_catagory" />
-
     <Button
         android:text="ADD"
         android:layout_width="wrap_content"
@@ -92,4 +74,24 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
         android:id="@+id/add_admin" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:inputType="textPersonName|numberDecimal"
+        android:ems="10"
+        android:layout_marginBottom="17dp"
+        android:id="@+id/price_add"
+        android:background="@drawable/border"
+        android:layout_above="@+id/spinner"
+        android:layout_alignStart="@+id/spinner" />
+
+    <TextView
+        android:text="Category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_catagory"
+        android:layout_alignBottom="@+id/spinner"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="16dp"/>
 </RelativeLayout>
