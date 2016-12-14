@@ -121,6 +121,7 @@ public class DiaglogModel extends DialogFragment {
                 FirebaseAuth.getInstance().signOut();
             }
         });
+        builder.setTitle("Please choose table before order");
         return builder.create();
     }
 

@@ -241,10 +241,15 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 if(holder.add.getText().toString().equals("ADD")) {
-                    FoodModel item = new FoodModel(child.getName(), child.getImg(), child.getPrice(), child.getQuantity(), child.getCatagory());
-                    if(child.getQuantity() > 0) {
-                        userOrder.child(child.getName()).setValue(item);
-                        holder.add.setText("REMOVE");
+                    if(child.getQuantity() <= 100) {
+                        FoodModel item = new FoodModel(child.getName(), child.getImg(), child.getPrice(), child.getQuantity(), child.getCatagory());
+                        if (child.getQuantity() > 0) {
+                            userOrder.child(child.getName()).setValue(item);
+                            holder.add.setText("REMOVE");
+                        }
+                    }
+                    else{
+                        Toast.makeText(rowView.getContext(), "This not allow quantity value larger than 100", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else{

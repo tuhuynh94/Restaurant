@@ -12,6 +12,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.gardo.myapplication.Model.DiaglogModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -145,8 +146,10 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     mDatabase.child("user").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("order").removeValue();
                     mProgress.dismiss();
-                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(i);
+//                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+//                    startActivity(i);
+                    DiaglogModel myDiaglog = new DiaglogModel();
+                    myDiaglog.show(getFragmentManager(), "show_diaglod");
                 }
             }
         });

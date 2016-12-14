@@ -30,22 +30,27 @@ public class CheckoutActivity extends AppCompatActivity {
         cash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table");
-                ref.addValueEventListener(new ValueEventListener() {
+                new AlertDialog.Builder(CheckoutActivity.this).setTitle("Sent payment request").setPositiveButton("DONE", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                        String table = getKeysByValue(map, mAuth.getCurrentUser().getUid());
-                        if (table != null && !table.equals("")) {
-                            ref.child(table).child("Status").setValue("Payment");
-                        }
-                    }
+                    public void onClick(DialogInterface dialog, int which) {
+                        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table");
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                                String table = getKeysByValue(map, mAuth.getCurrentUser().getUid());
+                                if (table != null && !table.equals("")) {
+                                    ref.child(table).child("Status").setValue("Payment");
+                                }
+                            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
+                            }
+                        });
                     }
-                });
+                }).create().show();
             }
         });
         Button pay_credit = (Button) findViewById(R.id.pay_credit);

@@ -117,11 +117,12 @@ public class CustomListViewStaffTableModel extends ArrayAdapter<Table> {
         listen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                table_item = table.get(position);
                 final DatabaseReference userOrder = FirebaseDatabase.getInstance().getReference().child("user").child(table_item.getCustomer_name());
                 final DatabaseReference OrderRef = FirebaseDatabase.getInstance().getReference().child("Order");
                 final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table").child(table_item.getTable_name());
                 ref.child("Status").setValue("USING");
-                userOrder.child("order").child("listened").setValue(true);
+                userOrder.child("order").child("listened").setValue("Accept");
             }
         });
         return rowView;
@@ -164,6 +165,7 @@ public class CustomListViewStaffTableModel extends ArrayAdapter<Table> {
                 DecimalFormat format = new DecimalFormat("0.00");
                 userOrder.child("Information").child("Total Spend").setValue(format.format(spend + total));
                 userOrder.child("Information").child("Reward Points").setValue(format.format(reward + total * 0.05));
+                userOrder.child("order").removeValue();
                 DatabaseReference childOrder = OrderRef.push();
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                 Calendar cal = Calendar.getInstance();
