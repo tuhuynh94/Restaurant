@@ -104,14 +104,16 @@ public class HotMenuFragment extends Fragment{
                 hotList.clear();
                 while (iterator.hasNext()) {
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot) iterator.next()).getValue();
-                    String name = (String) map.get("name");
-                    String img = String.valueOf(map.get("img"));
-                    Double price = Double.valueOf(String.valueOf(map.get("price")));
-                    Long like = Long.valueOf(String.valueOf(map.get("like")));
-                    String catagory = (String) map.get("catagory");
-                    FoodModel item = new FoodModel(name, img, price, 0, catagory);
-                    item.setLike(like);
-                    foodList.add(item);
+                    if(map.containsKey("name") && map.containsKey("img") && map.containsKey("price") && map.containsKey("like") && map.containsKey("catagory")) {
+                        String name = (String) map.get("name");
+                        String img = String.valueOf(map.get("img"));
+                        Double price = Double.valueOf(String.valueOf(map.get("price")));
+                        Long like = Long.valueOf(String.valueOf(map.get("like")));
+                        String catagory = (String) map.get("catagory");
+                        FoodModel item = new FoodModel(name, img, price, 0, catagory);
+                        item.setLike(like);
+                        foodList.add(item);
+                    }
                 }
                 Collections.sort(foodList);
                 StringBuilder res1 = new StringBuilder();

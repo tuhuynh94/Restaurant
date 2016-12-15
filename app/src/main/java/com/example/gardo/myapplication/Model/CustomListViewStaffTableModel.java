@@ -65,6 +65,18 @@ public class CustomListViewStaffTableModel extends ArrayAdapter<Table> {
         Button check_order = (Button) rowView.findViewById(R.id.check_order);
         status.setText(table.get(position).getStatus_Staff());
         table_text.setText(table.get(position).getTable_name());
+        if(table.get(position).getStatus_Staff().equals("Empty")){
+            table_text.setTextColor(rowView.getResources().getColor(R.color.green_new));
+            status.setTextColor(rowView.getResources().getColor(R.color.green_new));
+        }
+        else if(table.get(position).getStatus_Staff().equals("Payment")){
+            table_text.setTextColor(rowView.getResources().getColor(R.color.yellow_new));
+            status.setTextColor(rowView.getResources().getColor(R.color.yellow_new));
+        }
+        else{
+            table_text.setTextColor(rowView.getResources().getColor(R.color.red_new));
+            status.setTextColor(rowView.getResources().getColor(R.color.red_new));
+        }
         mProgressDialog = new ProgressDialog(rowView.getContext());
         mProgressDialog.setMessage("Processing...");
         check_order.setOnClickListener(new View.OnClickListener() {
@@ -121,7 +133,6 @@ public class CustomListViewStaffTableModel extends ArrayAdapter<Table> {
                 final DatabaseReference userOrder = FirebaseDatabase.getInstance().getReference().child("user").child(table_item.getCustomer_name());
                 final DatabaseReference OrderRef = FirebaseDatabase.getInstance().getReference().child("Order");
                 final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Table").child(table_item.getTable_name());
-                ref.child("Status").setValue("USING");
                 userOrder.child("order").child("listened").setValue("Accept");
             }
         });

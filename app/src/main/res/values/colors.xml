@@ -6,4 +6,7 @@
     <color name="pressed_color">#4d90fe</color>
     <color name="default_color">#ffffff</color>
     <color name="gray">#BDBDBD</color>
+    <color name="green_new">#4CAF50</color>
+    <color name="yellow_new">#FBC02D</color>
+    <color name="red_new">#FF5252</color>
 </resources>

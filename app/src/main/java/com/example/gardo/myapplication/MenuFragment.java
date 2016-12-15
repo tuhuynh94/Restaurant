@@ -127,7 +127,7 @@ public class MenuFragment extends Fragment implements SearchView.OnQueryTextList
         mProgress = new ProgressDialog(getActivity());
         mProgress.setMessage("Loading food....");
         mProgress.show();
-        foodRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        foodRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
@@ -137,21 +137,21 @@ public class MenuFragment extends Fragment implements SearchView.OnQueryTextList
                 drink.food.clear();
                 while (iterator.hasNext()){
                     Map<String, Object> map = (Map<String, Object>) ((DataSnapshot)iterator.next()).getValue();
-                    String name = (String) map.get("name");
-                    String img = String.valueOf(map.get("img"));
-                    Double price = Double.valueOf(String.valueOf(map.get("price")));
-                    String catagory = (String) map.get("catagory");
-                    FoodModel item = new FoodModel(name, img, price, 0, catagory);
-                    if(catagory.equals("main")){
-                        main.food.add(item);
-                    }
-                    else if(catagory.equals("dessert")){
-                        dessert.food.add(item);
-                    }
-                    else if(catagory.equals("drink")){
-                        drink.food.add(item);
-                    }
+                    if(map.containsKey("name") && map.containsKey("img") && map.containsKey("price") && map.containsKey("catagory")) {
+                        String name = (String) map.get("name");
+                        String img = String.valueOf(map.get("img"));
+                        Double price = Double.valueOf(String.valueOf(map.get("price")));
+                        String catagory = (String) map.get("catagory");
+                        FoodModel item = new FoodModel(name, img, price, 0, catagory);
+                        if (catagory.equals("main")) {
+                            main.food.add(item);
+                        } else if (catagory.equals("dessert")) {
+                            dessert.food.add(item);
+                        } else if (catagory.equals("drink")) {
+                            drink.food.add(item);
+                        }
 //                    foodList.add(item);
+                    }
                 }
                 catagoryFoods.add(main);
                 catagoryFoods.add(dessert);

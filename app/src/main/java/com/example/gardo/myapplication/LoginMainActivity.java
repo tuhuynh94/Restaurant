@@ -38,9 +38,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -114,7 +117,7 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
                 String e = email.getText().toString();
                 String p = password.getText().toString();
                 if (!email.getText().toString().equals("") && !password.getText().toString().equals("")) {
-                    if (email.getText().toString().equals("admin@123.com") && password.getText().toString().equals("admin123")) {
+                    if (email.getText().toString().equals("admin") && password.getText().toString().equals("admin")) {
                         Toast.makeText(LoginMainActivity.this, "Signed with Adminstrator", Toast.LENGTH_SHORT).show();
                         Intent i = new Intent(LoginMainActivity.this, AdminActivity.class);
                         i.putExtra("admin", "admin");
@@ -261,7 +264,21 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
 
     private void handleFacebookAccessToken(AccessToken token) {
 
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(!task.isSuccessful()){
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                    FirebaseUser prevUser = currentUser;
+                    try {
+                        currentUser = Tasks.await(mAuth.signInWithCredential(credential)).getUser();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -318,7 +335,21 @@ public class LoginMainActivity extends AppCompatActivity implements GoogleApiCli
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        final AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.getCurrentUser().linkWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(!task.isSuccessful()){
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                    FirebaseUser prevUser = currentUser;
+                    try {
+                        currentUser = Tasks.await(mAuth.signInWithCredential(credential)).getUser();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override

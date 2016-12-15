@@ -107,14 +107,14 @@ public class AddActivity extends AppCompatActivity {
                         ref.child("img").setValue(imgPath);
                         ref.child("like").setValue(0);
                         ref.child("catagory").setValue(catagory);
+                        Intent i = new Intent(getApplicationContext(), AdminActivity.class);
+                        startActivity(i);
                     }
                 });
                 try {
                     if(check) {
                         thread.start();
                         thread.sleep(1000);
-                        Intent i = new Intent(getApplicationContext(), AdminActivity.class);
-                        startActivity(i);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
