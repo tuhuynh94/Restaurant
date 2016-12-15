@@ -35,6 +35,7 @@ public class StaffActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff);
         Toolbar toolbar_bottom = (Toolbar) findViewById(R.id.toolbar_bottom);
+        setTitle("Staff Pocket Menu");
         toolbar_bottom.inflateMenu(R.menu.main_staff_bottom);
         toolbar_bottom.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
