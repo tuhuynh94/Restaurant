@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -113,7 +114,7 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
         final HolderExpand holder = new HolderExpand();
         final FoodModel child = (FoodModel) food.get(groupPosition).food.get(childPosition);
         holder.txtTitle = (TextView) rowView.findViewById(R.id.txt);
-        holder.number = (TextView) rowView.findViewById(R.id.quantity);
+        holder.number = (EditText) rowView.findViewById(R.id.quantity);
         holder.like = (ToggleButton) rowView.findViewById(R.id.like);
         holder.item = (RelativeLayout) rowView.findViewById(R.id.single_item);
         holder.img = (ImageView) rowView.findViewById(R.id.img);
@@ -149,6 +150,30 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
                     child.setQuantity(0);
                 }
                 holder.number.setText(Integer.toString(child.getQuantity()));
+            }
+        });
+        holder.number.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String quantity = holder.number.getText().toString();
+                if(!quantity.equals("")) {
+                    Integer number = Integer.parseInt(quantity);
+                    child.setQuantity(number);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String quantity = holder.number.getText().toString();
+                if(!quantity.equals("")) {
+                    Integer number = Integer.parseInt(quantity);
+                    child.setQuantity(number);
+                }
             }
         });
         mAuth = FirebaseAuth.getInstance();
